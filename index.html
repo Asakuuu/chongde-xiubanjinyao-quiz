@@ -160,14 +160,9 @@
             border-color: #9c8b74;
         }
 
-        button:active {
-            transform: translateY(1px);
-            border-bottom-width: 1px;
-        }
-
         button.selected-btn {
             background-color: #1a365d;
-            color: #ffffff !important;
+            color: #ffffff;
             border-color: #0f2441 !important;
             border-bottom: 2px solid #0b1a30 !important;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
@@ -1197,19 +1192,17 @@
             document.getElementById('area-fill').style.display = 'none';
             
             let options = generateSmartOptions(qData);
-            for(let i = 0; i < 4; i++) {
+			for(let i = 0; i < 4; i++) {
     			let btn = document.getElementById(`opt-${i}`);
     			btn.innerText = options[i];
     			btn.dataset.ans = options[i];
     
-    			// 1. 強制清空內聯樣式
+    			// 強制重置：移除樣式類別並清空內聯樣式
+    			btn.className = 'option-btn'; 
     			btn.style.backgroundColor = ""; 
     			btn.style.color = "";
     			btn.style.borderColor = "";
     			btn.style.borderBottom = "";
-    
-    			// 2. [新增這行] 強制移除藍色樣式的 class
-    			btn.classList.remove('selected-btn'); 
 			}
         } else {
             document.getElementById('area-choice').style.display = 'none';
