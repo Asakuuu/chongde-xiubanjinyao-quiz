@@ -166,7 +166,7 @@
         }
 
         button.selected-btn {
-            background-color: #1a365d !important;
+            background-color: #1a365d;
             color: #ffffff !important;
             border-color: #0f2441 !important;
             border-bottom: 2px solid #0b1a30 !important;
@@ -1197,16 +1197,19 @@
             document.getElementById('area-fill').style.display = 'none';
             
             let options = generateSmartOptions(qData);
-            for(let i=0; i<4; i++) {
-				let btn = document.getElementById(`opt-${i}`);
+            for(let i = 0; i < 4; i++) {
+    			let btn = document.getElementById(`opt-${i}`);
     			btn.innerText = options[i];
     			btn.dataset.ans = options[i];
     
-    			// 強制重置按鈕的 inline style (會覆蓋上一題的顏色)
+    			// 1. 強制清空內聯樣式
     			btn.style.backgroundColor = ""; 
     			btn.style.color = "";
     			btn.style.borderColor = "";
     			btn.style.borderBottom = "";
+    
+    			// 2. [新增這行] 強制移除藍色樣式的 class
+    			btn.classList.remove('selected-btn'); 
 			}
         } else {
             document.getElementById('area-choice').style.display = 'none';
