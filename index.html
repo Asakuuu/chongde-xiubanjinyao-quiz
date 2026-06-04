@@ -425,6 +425,12 @@
         }
 
         hr { border: 0; border-top: 1px dashed #cbd2cb; margin: 25px 0; }
+		@media screen and (max-width: 480px) {
+        body { padding: 10px; }
+        .container { padding: 25px 15px; }
+        h1 { font-size: 1.6rem !important; letter-spacing: 2px !important; }
+        .grid-container { grid-template-columns: repeat(10, 1fr) !important; gap: 4px; }
+        .option-btn { font-size: 0.95rem; padding: 12px 15px; }
     </style>
 </head>
 <body>
@@ -1192,12 +1198,16 @@
             
             let options = generateSmartOptions(qData);
             for(let i=0; i<4; i++) {
-                let btn = document.getElementById(`opt-${i}`);
-                btn.innerText = options[i];
-                btn.dataset.ans = options[i];
-                btn.style.backgroundColor = ""; 
-                btn.style.color = "";
-            }
+				let btn = document.getElementById(`opt-${i}`);
+    			btn.innerText = options[i];
+    			btn.dataset.ans = options[i];
+    
+    			// 強制重置按鈕的 inline style (會覆蓋上一題的顏色)
+    			btn.style.backgroundColor = ""; 
+    			btn.style.color = "";
+    			btn.style.borderColor = "";
+    			btn.style.borderBottom = "";
+			}
         } else {
             document.getElementById('area-choice').style.display = 'none';
             document.getElementById('area-fill').style.display = 'block';
