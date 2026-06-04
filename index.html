@@ -426,6 +426,16 @@
         h1 { font-size: 1.6rem !important; letter-spacing: 2px !important; }
         .grid-container { grid-template-columns: repeat(10, 1fr) !important; gap: 4px; }
         .option-btn { font-size: 0.95rem; padding: 12px 15px; }
+
+		button {
+   			/* 移除 iOS 點擊時的藍色高亮 */
+    		-webkit-tap-highlight-color: transparent;
+		}
+
+		/* 確保按鈕在焦點狀態下也不會有奇怪的預設樣式 */
+		button:focus {
+    		outline: none;
+		}
     </style>
 </head>
 <body>
@@ -1247,9 +1257,9 @@
 
     function submitChoice(index) {
         if(isTransitioning) return; 
-		let btn = document.getElementById(`opt-${index}`);
- 		btn.blur(); // 強制讓按鈕失去焦點，這樣它就不會因為被選取而藍色
-        checkAnswer(document.getElementById(`opt-${index}`).dataset.ans, currentQuestions[currentIdx].a, index);
+		document.activeElement.blur();
+ 		let btn = document.getElementById(`opt-${index}`);
+        checkAnswer(btn.dataset.ans, currentQuestions[currentIdx].a, index);
     }
 
     function submitFill() {
