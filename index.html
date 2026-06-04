@@ -163,8 +163,8 @@
         button.selected-btn {
             background-color: #1a365d;
             color: #ffffff;
-            border-color: #0f2441 !important;
-            border-bottom: 2px solid #0b1a30 !important;
+            border-color: #0f2441;
+            border-bottom: 2px solid #0b1a30;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
@@ -1193,12 +1193,12 @@
             
             let options = generateSmartOptions(qData);
 			for(let i = 0; i < 4; i++) {
-    			let btn = document.getElementById(`opt-${i}`);
+				let btn = document.getElementById(`opt-${i}`);
     			btn.innerText = options[i];
     			btn.dataset.ans = options[i];
     
-    			// 強制重置：移除樣式類別並清空內聯樣式
-    			btn.className = 'option-btn'; 
+    			// --- 強制重置的關鍵步驟 ---
+    			btn.className = 'option-btn'; // 強制將類別重置為預設，這會自動移除 selected-btn
     			btn.style.backgroundColor = ""; 
     			btn.style.color = "";
     			btn.style.borderColor = "";
