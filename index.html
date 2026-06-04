@@ -1247,6 +1247,8 @@
 
     function submitChoice(index) {
         if(isTransitioning) return; 
+		let btn = document.getElementById(`opt-${index}`);
+ 		btn.blur(); // 強制讓按鈕失去焦點，這樣它就不會因為被選取而藍色
         checkAnswer(document.getElementById(`opt-${index}`).dataset.ans, currentQuestions[currentIdx].a, index);
     }
 
