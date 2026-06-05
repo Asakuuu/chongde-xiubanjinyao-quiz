@@ -168,7 +168,6 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* 加成按鈕啟用時呈現典雅典雅金色 */
         button.selected-bonus-btn {
             background-color: #d4a373 !important;
             color: #ffffff !important;
@@ -248,7 +247,7 @@
             box-shadow: 0 0 8px rgba(140, 38, 38, 0.15), inset 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        /* --- 古風典雅進度看板 --- */
+        /* --- 進度看板 --- */
         .dashboard-classic {
             border: 1px solid #cbd2cb;
             outline: 1px dashed #b8a68d;
@@ -295,7 +294,7 @@
             border-color: #9c8b74;
         }
 
-        /* --- 進度與題庫檢索頁面樣式 --- */
+        /* --- 檢索與軌跡頁面 --- */
         .big-grid-box {
             border: 1px solid #cbd2cb;
             outline: 1px dashed #b8a68d;
@@ -581,12 +580,11 @@
 </div>
 
 <script>
-    // 內嵌精簡 400 題（此處完整保留您提供的 400 題結構與文本）
     const rawQuestionBank = [
     { q: "1\n佛堂是道場最基本的單位，可分為哪兩種？", a: "家壇、公壇。", tags: ["佛規"] },
     { q: "2\n發一崇德臺灣有九大道場，除雲林、彰化、臺北、臺中、苗栗、高雄、臺南之外還有哪兩大道場？", a: "桃園、中興。", tags: ["組織"] },
     { q: "3\n目前發一崇德海外有幾大道場？幾個道務中心？", a: "七大道場、十七個道務中心。", tags: ["組織"] },
-    { q: "4\n道場是我們求道、_________、_________、_________、_________及行道的地方。", a: "學道、修道、講道、辦道。", tags: ["道義"] },
+    { q: "4\n道場是我們求道、_________、_________ nudge、_________、_________及行道的地方。", a: "學道、修道、講道、辦道。", tags: ["道義"] },
     { q: "5\n在先天，我們的靈性都來自_________，是 明明上帝所分化的。", a: "無極理天。", tags: ["道義"] },
     { q: "6\n明明上帝全名為何？ 明明上帝_________清虛_________至聖_________十方_________真宰。", a: "無量、至尊、三界、萬靈。", tags: ["道義"] },
     { q: "7\n在現世修辦的因緣，我們都是一代明師_________、_________的弟子，是_________、_________的後學。", a: "濟公活佛（天然古佛）、月慧菩薩（中華聖母）、白水聖帝（老前人）、不休息菩薩（前人）。", tags: ["多人物"] },
@@ -638,8 +636,8 @@
     { q: "53\n老前人說：「明師一指點，告訴我們這個通天的正門叫做_________。", a: "通天竅（玄關竅）。", tags: ["道義"] },
     { q: "54\n老前人說：「我們得這一指點叫_________，……按著天性去做，就叫_________。」", a: "明心、見性。", tags: ["道義"] },
     { q: "55\n達摩祖師為後東方第一代祖，傳的是上乘大法，直指人心、見性成佛、不立文字、一步直超。有四句偈來形容達摩祖師傳道的真義？\n「達摩西來_________，全憑_________用功夫；若要_________尋佛法，筆尖蘸乾洞庭湖。」", a: "一字無、心意、紙上。", tags: ["經典"] },
-    { q: "56\n老前人說：「我們道中有內功，是真人靜坐。道法自然，坐的時候……」如何做？\n（身體要自然，背脊要直，兩眼自然八分閉，_________，舌頂上顎，_________，兩膀下垂放鬆，自然氣貫丹田。）", a: "平心靜氣、二目守玄。", tags: ["經典"] },
-    { q: "57\n命有三命，其內容為何？", a: "天命、宿命、陰命。", tags: ["經典"] },
+    { q: "56\n老前人說：「我們道中有內功，是真人靜坐。道法自然，坐的時候……」如何做？\n（身體要自然，背脊要直，兩眼自然八分閉，_________，舌頂上顎，_________，兩膀下垂放蹤，自然氣貫丹田。）", a: "平心靜氣、二目守玄。", tags: ["經典"] },
+    { q: "57\n命有三命，其內容 homespun 為何？", a: "天命、宿命、陰命。", tags: ["經典"] },
     { q: "58\n在《論語聖訓・序》中，至聖先師慈訓：「吾之一生，實為_________。」", a: "明傳詩書暗傳道。", tags: ["經典"] },
     { q: "59\n《論語・學而》，曾子每天拿哪三件事來來反省自己？\n（1）為人謀，而_________乎？\n（2）與朋友交，而_________乎？\n（3）傳，_________乎？", a: "不忠、不信、不習。", tags: ["經典"] },
     { q: "60\n《論語・學而》：「夫子至於是邦也，必聞其政，_________以得之。」", a: "溫良恭儉讓。", tags: ["經典"] },
@@ -647,7 +645,7 @@
     { q: "62\n《論語・季氏》：「子曰：『君子有三畏，_________，_________，_________』。」", a: "畏天命、畏大人、畏聖人之言。", tags: ["經典"] },
     { q: "63\n《論語・顏淵》：顏淵問仁，孔子答之如何為仁？\n（_________為仁，一日克己復禮，天下歸仁焉。為仁由己，而由人乎哉？）", a: "克己復禮。", tags: ["經典"] },
     { q: "64\n《論語・顏淵》顏淵問為仁之條目，請問孔子如何答之？\n「非禮勿_________，非禮勿_________，非禮勿_________，非禮勿_________。」", a: "視、聽、言、動。", tags: ["經典"] },
-    { q: "65\n《論語・陽貨》：子張問仁於孔子。孔子曰：「能行五者於天下，為仁矣。」請問此五者為何？", a: "恭、寬、信、敏、惠。", tags: ["經典"] },
+    { q: "65\n《論語・陽貨》：子張問仁於孔子.孔子曰：「能行五者於天下，為仁矣。」請問此五者為何？", a: "恭、寬、信、敏、惠。", tags: ["經典"] },
     { q: "66\n《論語・學而》：子曰君子如何則「可謂好學也已」？\n君子食無_________，居無_________，敏於事而_________，就 有道而正焉。", a: "求飽、求安、慎於言。", tags: ["經典"] },
     { q: "67\n《論語・衛靈公》：孔子在陳絕糧，從者病，莫能興。子路慍見曰：「君子亦有窮乎？」請問孔子如何言答？\n「君子固窮，小人_________。」", a: "窮斯濫矣。", tags: ["經典"] },
     { q: "68\n《論語・季氏》：孔子曰君子有三戒。\n（1）少之時，血氣未定，戒之在_________。\n（2）及其壯也，血氣方剛，戒之在_________。\n（3）及其老也，血氣既衰，戒之在_________。", a: "色、鬥、得。", tags: ["經典"] },
@@ -690,7 +688,7 @@
 
     let gameMode = null; 
     let totalQuestionsSetting = null; 
-    let bonusMode = null; // 全新變數：'unvisited' (優先未出題) 或是 'review' (錯題複習)，null為全隨機
+    let bonusMode = null; // 'unvisited' (優先未出題), 'review' (錯題複習), null
     let currentQuestions = []; 
     let currentIdx = 0;
     let scoreCorrect = 0;
@@ -723,7 +721,7 @@
         return stored ? JSON.parse(stored) : [];
     }
 
-    // 檢查錯題本數量，更新加成按鈕狀態
+    // 完美修正：檢查錯題本數量，更新加成按鈕與聯動邏輯
     function checkLocalStorageStatus() {
         let wrongList = getStoredWrongQuestions();
         const reviewBtn = document.getElementById('bonus-review');
@@ -739,7 +737,12 @@
         reviewBtn.innerText = `錯題複習 (${validWrongCount}題)`;
         
         if (validWrongCount === 0) {
-            if (bonusMode === 'review') bonusMode = null; // 沒錯題時自動關閉加成
+            reviewBtn.disabled = true; // 1. 若0題則自動關閉該按鈕不可互動
+            if (bonusMode === 'review') {
+                bonusMode = null;
+            }
+        } else {
+            reviewBtn.disabled = false;
         }
     }
 
@@ -764,6 +767,8 @@
 
     function selectMode(mode) { 
         if(isTransitioning) return; 
+        // 當勾選錯題複習時，不可選擇模式
+        if (bonusMode === 'review') return;
         gameMode = mode; 
         updateMenuUI(); 
     }
@@ -774,38 +779,50 @@
         updateMenuUI(); 
     }
 
-    // 全新加成開關切換邏輯
+    // 完美修正：全新加成開關切換邏輯與模式鎖定聯動
     function selectBonus(bonusType) {
         if(isTransitioning) return;
         if (bonusMode === bonusType) {
-            bonusMode = null; // 再點一次即取消勾選
+            bonusMode = null; // 取消勾選
         } else {
             bonusMode = bonusType;
+            // 2. 點擊錯題複習，自動勾選填空題
+            if (bonusMode === 'review') {
+                gameMode = 'fill'; 
+            }
         }
         checkLocalStorageStatus();
         updateMenuUI();
     }
     
     function updateMenuUI() {
-        // 重置所有模式與題數按鈕
-        document.getElementById('mode-choice').classList.remove('selected-btn');
-        document.getElementById('mode-fill').classList.remove('selected-btn');
+        const choiceModeBtn = document.getElementById('mode-choice');
+        const fillModeBtn = document.getElementById('mode-fill');
+
+        // 重置所有按鈕樣式
+        choiceModeBtn.classList.remove('selected-btn');
+        fillModeBtn.classList.remove('selected-btn');
         document.getElementById('num-15').classList.remove('selected-btn');
         document.getElementById('num-30').classList.remove('selected-btn');
         document.getElementById('num-50').classList.remove('selected-btn');
         
-        // 重置加成按鈕
         document.getElementById('bonus-unvisited').classList.remove('selected-bonus-btn');
         document.getElementById('bonus-review').classList.remove('selected-bonus-btn');
 
-        if (gameMode === 'choice') document.getElementById('mode-choice').classList.add('selected-btn');
-        if (gameMode === 'fill') document.getElementById('mode-fill').classList.add('selected-btn');
+        // 聯動控管：點擊錯題複習時，不可選擇選擇題（禁用按鈕）
+        if (bonusMode === 'review') {
+            choiceModeBtn.disabled = true;
+        } else {
+            choiceModeBtn.disabled = false;
+        }
+
+        if (gameMode === 'choice') choiceModeBtn.classList.add('selected-btn');
+        if (gameMode === 'fill') fillModeBtn.classList.add('selected-btn');
         
         if (totalQuestionsSetting === 15) document.getElementById('num-15').classList.add('selected-btn');
         if (totalQuestionsSetting === 30) document.getElementById('num-30').classList.add('selected-btn');
         if (totalQuestionsSetting === 50) document.getElementById('num-50').classList.add('selected-btn');
 
-        // 更新加成按鈕高亮
         if (bonusMode === 'unvisited') document.getElementById('bonus-unvisited').classList.add('selected-bonus-btn');
         if (bonusMode === 'review') document.getElementById('bonus-review').classList.add('selected-bonus-btn');
     }
@@ -818,7 +835,6 @@
         let pool = [];
 
         if (bonusMode === 'review') {
-            // 1. 錯題複習加成模式
             let wrongTexts = getStoredWrongQuestions();
             pool = rawQuestionBank.filter(item => {
                 let cleanBankQ = item.q.replace(/^\d+\n/g, "").trim();
@@ -828,30 +844,27 @@
                 });
             });
             if (pool.length === 0) {
-                alert("您目前沒有錯題資料，系統將自動切換為完整隨機題庫。");
+                alert("您目前沒有錯題資料，將為您切換為常規抽題。");
                 pool = [...rawQuestionBank];
                 bonusMode = null;
                 updateMenuUI();
             }
         } 
         else if (bonusMode === 'unvisited') {
-            // 2. 優先未出題加成模式
             pool = rawQuestionBank.filter(item => !progressMap[item.q]);
             if (pool.length === 0) {
-                alert("恭喜！所有考題皆已挑戰過一輪！系統將切換為全題庫抽題。");
+                alert("恭喜！所有考題皆已挑戰過一輪！將為您切換為全題庫抽題。");
                 pool = [...rawQuestionBank];
                 bonusMode = null;
                 updateMenuUI();
             }
         } 
         else {
-            // 3. 無加成（常規全題庫抽題）
             pool = [...rawQuestionBank];
         }
 
-        // 洗牌與取題：精確執行「以小為主」的容錯邏輯
         let shuffled = pool.sort(() => 0.5 - Math.random());
-        let finalCount = Math.min(totalQuestionsSetting, shuffled.length); // 以小為主
+        let finalCount = Math.min(totalQuestionsSetting, shuffled.length); 
         currentQuestions = shuffled.slice(0, finalCount);
 
         currentIdx = 0;
@@ -861,7 +874,6 @@
 
         switchScreen('screen-game');
         
-        // 動態生成測驗抬頭
         let titleText = gameMode === 'choice' ? '選擇題模式' : '填空題模式';
         if (bonusMode === 'unvisited') titleText += ' + 優先未出';
         if (bonusMode === 'review') titleText += ' + 錯題複習';
@@ -957,27 +969,24 @@
     function checkAnswer(playerAns, currentCorrectAns, choiceIndex = null) {
         isTransitioning = true;
 
-        // 內部優化後的 normalizeText，完美解決「一百人」與「100人」的比對盲點
         function normalizeText(text) {
-            // 1. 先移除所有標點符號、括號與空白
             let clean = text.replace(/[。，、；：：？?.,;: \s（）()]/g, "");
 
-            // 2. 將字串中的中文連續數字（如：一百、六十四、兩代）智慧型轉換為阿拉伯數字
             const chineseNumRegex = /[一二三四五六七八九十百千萬兩〇零]+/g;
             clean = clean.replace(chineseNumRegex, function(match) {
                 if (match === '零' || match === '〇') return match;
-            
+                
                 let val = 0;
                 let temp = 0;
                 const cMap = { '一':1, '二':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9, '兩':2, '十':10, '百':100, '千':1000, '萬':10000, '零':0, '〇':0 };
-            
+                
                 for (let i = 0; i < match.length; i++) {
                     let cn = match[i];
                     let num = cMap[cn];
                     if (num === undefined) continue;
-                
+                    
                     if (num === 10 || num === 100 || num === 1000) {
-                        if (temp === 0) temp = 1; // 處理像是「十四」開頭省略一的情況
+                        if (temp === 0) temp = 1; 
                         val += temp * num;
                         temp = 0;
                     } else if (num === 10000) {
@@ -992,7 +1001,6 @@
                 return val.toString();
             });
 
-            // 3. 基礎單字對照表（作為最終零與單個數字的保險防禦）
             const map = { '一': '1', '二': '2', '三': '3', '四': '4', '五': '5', '六': '6', '七': '7', '八': '8', '九': '9', '〇': '0', '零': '0', '兩': '2' };
             for (let key in map) {
                 clean = clean.split(key).join(map[key]);
@@ -1002,7 +1010,7 @@
 
         let cleanPlayer = normalizeText(playerAns);
         let standardized = normalizeText(currentCorrectAns);
-    
+        
         let isCorrect = false;
         if (gameMode === 'choice') {
             isCorrect = (playerAns === currentCorrectAns);
@@ -1031,7 +1039,7 @@
             document.getElementById(`opt-${choiceIndex}`).style.backgroundColor = isCorrect ? "#4a5d4c" : "#a63232";
             document.getElementById(`opt-${choiceIndex}`).style.color = "#ffffff";
         }
-    
+
         container.style.outlineColor = isCorrect ? "#4a5d4c" : "#a63232";
         if (!isCorrect) container.classList.add('shake-effect');
 
