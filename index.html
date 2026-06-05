@@ -421,21 +421,44 @@
 
         hr { border: 0; border-top: 1px dashed #cbd2cb; margin: 25px 0; }
 		@media screen and (max-width: 480px) {
-        body { padding: 10px; }
-        .container { padding: 25px 15px; }
-        h1 { font-size: 1.6rem !important; letter-spacing: 2px !important; }
-        .grid-container { grid-template-columns: repeat(10, 1fr) !important; gap: 4px; }
-        .option-btn { font-size: 0.95rem; padding: 12px 15px; }
+    		body { padding: 10px; }
+    		.container { padding: 25px 15px; }
+    		h1 { font-size: 1.6rem !important; letter-spacing: 2px !important; }
+    
+    		/* 1. 主畫面進度區塊優化 */
+    		.db-header {
+        		flex-direction: column; /* 改為垂直排列 */
+        		align-items: flex-start;
+        		gap: 10px;
+    		}
+    		.db-header-title { font-size: 0.95rem; }
+    		#db-ratio { margin-right: 0 !important; font-size: 0.85rem; color: #5d5249; }
+    		.view-detail-btn { width: 100%; padding: 8px 0; }
 
-		button {
-   			/* 移除 iOS 點擊時的藍色高亮 */
-    		-webkit-tap-highlight-color: transparent;
-		}
+    		/* 2. 進度頁面的全局攻克軌跡優化 */
+    		.grid-header-row {
+       			flex-direction: column;
+        		align-items: flex-start;
+        		gap: 8px;
+    		}
+    		.grid-legend-inline {
+        		font-size: 10px;
+        		line-height: 1.4;
+    		}
+    		.grid-container {
+        		grid-template-columns: repeat(10, 1fr) !important;
+        		gap: 4px;
+        		max-height: 180px; /* 稍微增加高度，避免滑動太頻繁 */
+    		}
 
-		/* 確保按鈕在焦點狀態下也不會有奇怪的預設樣式 */
-		button:focus {
-    		outline: none;
-		}
+    		.option-btn { font-size: 0.95rem; padding: 12px 15px; }
+
+    		button {
+        		-webkit-tap-highlight-color: transparent;
+   			}
+    		button:focus {
+        		outline: none;
+    		}
     </style>
 </head>
 <body>
