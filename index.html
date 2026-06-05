@@ -427,6 +427,7 @@
         
         /* 1. 主畫面進度區塊：將「已挑戰」與「按鈕」保持在一行 */
             .db-header {
+                display: flex;              /* 確保啟用 flex 佈局 */
                 flex-direction: row;        /* 強制改回水平排列 */
                 justify-content: space-between;
                 align-items: center;
@@ -436,6 +437,12 @@
                 font-size: 0.85rem; 
                 white-space: nowrap;        /* 避免數據文字在手機上斷行 */
             }
+
+            .db-header > div {
+                margin-left: auto;          /* 自動將左側推開，使其在第二行時也能精確靠右 */
+                margin-top: 4px;            /* 若真的換行，與上方文字拉開一點微小間距，避免視覺太擁擠 */
+            }
+            
             .view-detail-btn { 
                 padding: 6px 12px; 
                 font-size: 0.8rem; 
