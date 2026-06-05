@@ -586,7 +586,7 @@
     { q: "1\n佛堂是道場最基本的單位，可分為哪兩種？", a: "家壇、公壇。", tags: ["佛規"] },
     { q: "2\n發一崇德臺灣有九大道場，除雲林、彰化、臺北、臺中、苗栗、高雄、臺南之外還有哪兩大道場？", a: "桃園、中興。", tags: ["組織"] },
     { q: "3\n目前發一崇德海外有幾大道場？幾個道務中心？", a: "七大道場、十七個道務中心。", tags: ["組織"] },
-    { q: "4\n道場是我們求道、_________、_________、_________ wilderness、_________及行道的地方。", a: "學道、修道、講道、辦道。", tags: ["道義"] },
+    { q: "4\n道場是我們求道、_________、_________、_________、_________及行道的地方。", a: "學道、修道、講道、辦道。", tags: ["道義"] },
     { q: "5\n在先天，我們的靈性都來自_________，是 明明上帝所分化的。", a: "無極理天。", tags: ["道義"] },
     { q: "6\n明明上帝全名為何？ 明明上帝_________清虛_________至聖_________十方_________真宰。", a: "無量、至尊、三界、萬靈。", tags: ["道義"] },
     { q: "7\n在現世修辦的因緣，我們都是一代明師_________、_________的弟子，是_________、_________的後學。", a: "濟公活佛（天然古佛）、月慧菩薩（中華聖母）、白水聖帝（老前人）、不休息菩薩（前人）。", tags: ["多人物"] },
@@ -957,9 +957,43 @@
     function checkAnswer(playerAns, currentCorrectAns, choiceIndex = null) {
         isTransitioning = true;
 
+        // 內部優化後的 normalizeText，完美解決「一百人」與「100人」的比對盲點
         function normalizeText(text) {
+            // 1. 先移除所有標點符號、括號與空白
             let clean = text.replace(/[。，、；：：？?.,;: \s（）()]/g, "");
-            const map = { '一': '1', '二': '2', '三': '3', '四': '4', '五': '5', '六': '6', '七': '7', '八': '8', '九': '9', '〇': '0', '零': '0' };
+
+            // 2. 將字串中的中文連續數字（如：一百、六十四、兩代）智慧型轉換為阿拉伯數字
+            const chineseNumRegex = /[一二三四五六七八九十百千萬兩〇零]+/g;
+            clean = clean.replace(chineseNumRegex, function(match) {
+                if (match === '零' || match === '〇') return match;
+            
+                let val = 0;
+                let temp = 0;
+                const cMap = { '一':1, '二':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9, '兩':2, '十':10, '百':100, '千':1000, '萬':10000, '零':0, '〇':0 };
+            
+                for (let i = 0; i < match.length; i++) {
+                    let cn = match[i];
+                    let num = cMap[cn];
+                    if (num === undefined) continue;
+                
+                    if (num === 10 || num === 100 || num === 1000) {
+                        if (temp === 0) temp = 1; // 處理像是「十四」開頭省略一的情況
+                        val += temp * num;
+                        temp = 0;
+                    } else if (num === 10000) {
+                        val += temp;
+                        val *= 10000;
+                        temp = 0;
+                    } else {
+                        temp = num;
+                    }
+                }
+                val += temp;
+                return val.toString();
+            });
+
+            // 3. 基礎單字對照表（作為最終零與單個數字的保險防禦）
+            const map = { '一': '1', '二': '2', '三': '3', '四': '4', '五': '5', '六': '6', '七': '7', '八': '8', '九': '9', '〇': '0', '零': '0', '兩': '2' };
             for (let key in map) {
                 clean = clean.split(key).join(map[key]);
             }
@@ -968,7 +1002,7 @@
 
         let cleanPlayer = normalizeText(playerAns);
         let standardized = normalizeText(currentCorrectAns);
-        
+    
         let isCorrect = false;
         if (gameMode === 'choice') {
             isCorrect = (playerAns === currentCorrectAns);
@@ -997,7 +1031,7 @@
             document.getElementById(`opt-${choiceIndex}`).style.backgroundColor = isCorrect ? "#4a5d4c" : "#a63232";
             document.getElementById(`opt-${choiceIndex}`).style.color = "#ffffff";
         }
-
+    
         container.style.outlineColor = isCorrect ? "#4a5d4c" : "#a63232";
         if (!isCorrect) container.classList.add('shake-effect');
 
