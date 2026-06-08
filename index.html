@@ -225,7 +225,13 @@
             border-color: #102543;
             border-left-color: #4a7bb0;
         }
-
+        @media (hover: hover) {
+        .option-btn:hover {
+            background-color: #1a365d;
+            color: #faf7f2;
+            border-color: #102543;
+            border-left-color: #4a7bb0;
+        }
         input[type="text"] {
             width: 85%;
             padding: 14px;
@@ -1218,21 +1224,37 @@
         let correctAns = currentQData.a;
         let currentTags = currentQData.tags || [];
 
-        let pool = rawQuestionBank.filter(item => {
+        // 1. 嚴格篩選：撈出標籤相同、且答案不同的題目
+        let targetedPool = rawQuestionBank.filter(item => {
             if (item.a === correctAns) return false;
             let itemTags = item.tags || [];
             return currentTags.some(t => itemTags.includes(t));
         });
 
-        if (pool.length < 5) {
-            let allPool = rawQuestionBank.filter(item => item.a !== correctAns);
-            pool = [...new Set([...pool, ...allPool])];
+        // 2. 轉成不重複的答案陣列，並隨機打亂
+        let wrongAnswers = [...new Set(targetedPool.map(item => item.a))];
+        wrongAnswers.sort(() => 0.5 - Math.random());
+    
+        // 取出前三個錯誤答案
+        let selectedWrong = wrongAnswers.slice(0, 3);
+
+        // 3. 【核心修正】如果同標籤的答案不夠 3 個，才去全題庫撈其他答案補齊
+        if (selectedWrong.length < 3) {
+            let allPool = rawQuestionBank
+                .filter(item => item.a !== correctAns)
+                .map(item => item.a);
+        
+            let uniqueAllPool = [...new Set(allPool)].sort(() => 0.5 - Math.random());
+
+            for (let f of uniqueAllPool) {
+                if (selectedWrong.length >= 3) break;
+                if (!selectedWrong.includes(f)) {
+                    selectedWrong.push(f);
+                }
+            }
         }
 
-        let wrongAnswers = [...new Set(pool.map(item => item.a))];
-        wrongAnswers.sort(() => 0.5 - Math.random());
-        
-        let selectedWrong = wrongAnswers.slice(0, 3);
+        // 4. 如果連全題庫都不夠（極少見），再用固定填充字串
         if (selectedWrong.length < 3) {
             let fillers = ["家壇、公壇。", "學道、修道、講道、辦道。", "無極理天。"];
             fillers.forEach(f => {
@@ -1248,7 +1270,6 @@
         let finalOptions = [correctAns, ...selectedWrong];
         return finalOptions.sort(() => 0.5 - Math.random());
     }
-
     function submitChoice(index) {
         if(isTransitioning) return; 
         document.activeElement.blur();
