@@ -503,7 +503,7 @@
 
         <div class="dashboard-classic">
             <div class="db-header">
-                <span class="db-header-title">❖ 400 題完整修辦挑戰進度</span>
+                <span class="db-header-title" id="db-main-title">❖ 400 題完整修辦挑戰進度</span>
                 <div style="display: flex; align-items: center;">
                     <span id="db-ratio" style="margin-right: 12px; font-size: 0.95rem;">已挑戰: 0 / 400 題 (0%)</span>
                     <button type="button" class="view-detail-btn" onclick="goToInspectPage()">查看全題</button>
@@ -516,12 +516,12 @@
     </div>
 
     <div id="screen-inspect" class="section">
-        <h1 style="font-size: 2rem;">修班津要題庫進度</h1>
+        <h1 style="font-size: 2rem;">修辦津要題庫進度</h1>
         <div class="title-line" style="width: 160px; margin-bottom: 20px;"></div>
         
         <div class="big-grid-box">
             <div class="grid-header-row">
-                <div style="font-weight: bold; color: #8c2626; font-size: 1.05rem;">❖ 全局攻克軌跡</div>
+                <div style="font-weight: bold; color: #8c2626; font-size: 1.05rem;" id="inspect-grid-title">❖ 全局攻克軌跡</div>
                 <div class="grid-legend-inline">綠色=已攻克 ｜ 紅色=待複習 ｜ 灰色=未出題</div>
                 <div style="font-size: 11px; color: #1a365d; font-weight: bold; letter-spacing: 1px;">點擊框格快速瀏覽</div>
             </div>            
@@ -555,7 +555,7 @@
         </div>
 
         <div id="area-fill" style="display: none;">
-            <input type="text" id="fill-input" placeholder="請在此處輸入答案" autocomplete="off"><br>
+            <input type="text" id="fill-input" placeholder="請在此處輸入答案" autocomplete="off" onkeydown="if(event.keyCode==13) submitFill()"><br>
             <button class="start-btn" style="font-size: 1.05rem; padding: 10px 40px; margin-top: 5px;" onclick="submitFill()">確認送出</button>
         </div>
     </div>
@@ -1003,6 +1003,10 @@
         if (!localStorage.getItem('修辦津要_通關軌跡')) {
             localStorage.setItem('修辦津要_通關軌跡', JSON.stringify({}));
         }
+        // 初始化通關輪數，預設第 1 輪
+        if (!localStorage.getItem('修辦津要_通關輪數')) {
+            localStorage.setItem('修辦津要_通關輪數', '1');
+        }
     }
     function getProgressMap() {
         return JSON.parse(localStorage.getItem('修辦津要_通關軌跡') || '{}');
@@ -1012,13 +1016,19 @@
         map[qText] = state; 
         localStorage.setItem('修辦津要_通關軌跡', JSON.stringify(map));
     }
+    function getRoundCount() {
+        return parseInt(localStorage.getItem('修辦津要_通關輪數') || '1', 10);
+    }
+    function incrementRound() {
+        let currentRound = getRoundCount();
+        localStorage.setItem('修辦津要_通關輪數', (currentRound + 1).toString());
+    }
 
     function getStoredWrongQuestions() {
         let stored = localStorage.getItem('修辦津要_錯題本');
         return stored ? JSON.parse(stored) : [];
     }
 
-    // 完美修正：檢查錯題本數量，更新加成按鈕與聯動邏輯
     function checkLocalStorageStatus() {
         let wrongList = getStoredWrongQuestions();
         const reviewBtn = document.getElementById('bonus-review');
@@ -1034,7 +1044,7 @@
         reviewBtn.innerText = `錯題複習 (${validWrongCount}題)`;
         
         if (validWrongCount === 0) {
-            reviewBtn.disabled = true; // 1. 若0題則自動關閉該按鈕不可互動
+            reviewBtn.disabled = true; 
             if (bonusMode === 'review') {
                 bonusMode = null;
             }
@@ -1046,6 +1056,7 @@
     function renderDashboardData() {
         const ratioText = document.getElementById('db-ratio');
         const barInner = document.getElementById('db-progress-bar');
+        const mainTitle = document.getElementById('db-main-title');
         
         let progressMap = getProgressMap();
         let totalCount = rawQuestionBank.length;
@@ -1058,13 +1069,15 @@
         });
 
         let percent = totalCount > 0 ? Math.round((visitedCount / totalCount) * 100) : 0;
+        let roundStr = getRoundCount() > 1 ? ` (第 ${getRoundCount()} 輪)` : '';
+        
+        mainTitle.innerText = `❖ 400 題完整修辦挑戰進度${roundStr}`;
         ratioText.innerText = `已挑戰: ${visitedCount} / ${totalCount} 題 (${percent}%)`;
         barInner.style.width = `${percent}%`;
     }
 
     function selectMode(mode) { 
         if(isTransitioning) return; 
-        // 當勾選錯題複習時，不可選擇模式
         if (bonusMode === 'review') return;
         gameMode = mode; 
         updateMenuUI(); 
@@ -1076,14 +1089,12 @@
         updateMenuUI(); 
     }
 
-    // 全新加成開關切換邏輯與模式鎖定聯動
     function selectBonus(bonusType) {
         if(isTransitioning) return;
         if (bonusMode === bonusType) {
-            bonusMode = null; // 取消勾選
+            bonusMode = null; 
         } else {
             bonusMode = bonusType;
-            // 2. 點擊錯題複習，自動勾選填空題
             if (bonusMode === 'review') {
                 gameMode = 'fill'; 
             }
@@ -1096,7 +1107,6 @@
         const choiceModeBtn = document.getElementById('mode-choice');
         const fillModeBtn = document.getElementById('mode-fill');
 
-        // 重置所有按鈕樣式
         choiceModeBtn.classList.remove('selected-btn');
         fillModeBtn.classList.remove('selected-btn');
         document.getElementById('num-15').classList.remove('selected-btn');
@@ -1106,7 +1116,6 @@
         document.getElementById('bonus-unvisited').classList.remove('selected-bonus-btn');
         document.getElementById('bonus-review').classList.remove('selected-bonus-btn');
 
-        // 聯動控管：點擊錯題複習時，不可選擇選擇題（禁用按鈕）
         if (bonusMode === 'review') {
             choiceModeBtn.disabled = true;
         } else {
@@ -1149,11 +1158,14 @@
         } 
         else if (bonusMode === 'unvisited') {
             pool = rawQuestionBank.filter(item => !progressMap[item.q]);
+            
+            // 當全部 400 題（本範例依據陣列長度）都出過時，自動觸發重置並進到下一輪
             if (pool.length === 0) {
-                alert("恭喜！所有考題皆已挑戰過一輪！將為您切換為全題庫抽題。");
+                incrementRound(); // 輪數加 1
+                localStorage.setItem('修辦津要_通關軌跡', JSON.stringify({})); // 重置通關軌跡
+                progressMap = {};
+                alert(`恭喜您！完整修辦考題已全數攻克！\n系統已自動為您重置題庫，進入【第 ${getRoundCount()} 輪】全局挑戰！`);
                 pool = [...rawQuestionBank];
-                bonusMode = null;
-                updateMenuUI();
             }
         } 
         else {
@@ -1218,21 +1230,17 @@
         let correctAns = currentQData.a;
         let currentTags = currentQData.tags || [];
 
-        // 1. 嚴格篩選：撈出標籤相同、且答案不同的題目
         let targetedPool = rawQuestionBank.filter(item => {
             if (item.a === correctAns) return false;
             let itemTags = item.tags || [];
             return currentTags.some(t => itemTags.includes(t));
         });
 
-        // 2. 轉成不重複的答案陣列，並隨機打亂
         let wrongAnswers = [...new Set(targetedPool.map(item => item.a))];
         wrongAnswers.sort(() => 0.5 - Math.random());
     
-        // 取出前三個錯誤答案
         let selectedWrong = wrongAnswers.slice(0, 3);
 
-        // 3. 【核心修正】如果同標籤的答案不夠 3 個，才去全題庫撈其他答案補齊
         if (selectedWrong.length < 3) {
             let allPool = rawQuestionBank
                 .filter(item => item.a !== correctAns)
@@ -1248,7 +1256,6 @@
             }
         }
 
-        // 4. 如果連全題庫都不夠（極少見），再用固定填充字串
         if (selectedWrong.length < 3) {
             let fillers = ["家壇、公壇。", "學道、修道、講道、辦道。", "無極理天。"];
             fillers.forEach(f => {
@@ -1264,6 +1271,7 @@
         let finalOptions = [correctAns, ...selectedWrong];
         return finalOptions.sort(() => 0.5 - Math.random());
     }
+
     function submitChoice(index) {
         if(isTransitioning) return; 
         document.activeElement.blur();
@@ -1283,40 +1291,23 @@
 
         function normalizeText(text) {
             let clean = text.replace(/[。，、；：：？?.,;: \s（）()]/g, "");
-
             const chineseNumRegex = /[一二三四五六七八九十百千萬兩〇零]+/g;
             clean = clean.replace(chineseNumRegex, function(match) {
                 if (match === '零' || match === '〇') return match;
-                
-                let val = 0;
-                let temp = 0;
+                let val = 0; let temp = 0;
                 const cMap = { '一':1, '二':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9, '兩':2, '十':10, '百':100, '千':1000, '萬':10000, '零':0, '〇':0 };
-                
                 for (let i = 0; i < match.length; i++) {
-                    let cn = match[i];
-                    let num = cMap[cn];
-                    if (num === undefined) continue;
-                    
+                    let cn = match[i]; let num = cMap[cn]; if (num === undefined) continue;
                     if (num === 10 || num === 100 || num === 1000) {
-                        if (temp === 0) temp = 1; 
-                        val += temp * num;
-                        temp = 0;
+                        if (temp === 0) temp = 1; val += temp * num; temp = 0;
                     } else if (num === 10000) {
-                        val += temp;
-                        val *= 10000;
-                        temp = 0;
-                    } else {
-                        temp = num;
-                    }
+                        val += temp; val *= 10000; temp = 0;
+                    } else { temp = num; }
                 }
-                val += temp;
-                return val.toString();
+                val += temp; return val.toString();
             });
-
             const map = { '一': '1', '二': '2', '三': '3', '四': '4', '五': '5', '六': '6', '七': '7', '八': '8', '九': '9', '〇': '0', '零': '0', '兩': '2' };
-            for (let key in map) {
-                clean = clean.split(key).join(map[key]);
-            }
+            for (let key in map) { clean = clean.split(key).join(map[key]); }
             return clean;
         }
 
@@ -1411,8 +1402,13 @@
 
     function buildInspectDotsGrid() {
         const gridContainer = document.getElementById('inspect-dots-container');
+        const gridTitle = document.getElementById('inspect-grid-title');
         gridContainer.innerHTML = '';
         let progressMap = getProgressMap();
+
+        // 於全局攻克檢索處同步顯示當前輪數
+        let roundStr = getRoundCount() > 1 ? ` (第 ${getRoundCount()} 輪)` : '';
+        gridTitle.innerText = `❖ 全局攻克軌跡${roundStr}`;
 
         rawQuestionBank.forEach((item, idx) => {
             const dot = document.createElement('div');
