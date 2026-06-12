@@ -478,7 +478,26 @@
         <h1>修辦津要題庫測驗</h1>
         <div class="title-line"></div>
         <h2>溫故知新，精進修辦資糧</h2>
+    <button type="button" onclick="openTip()" style="background: none; border: 1px solid #8c2626; color: #8c2626; padding: 2px 10px; font-size: 0.8rem; border-radius: 10px; margin-bottom: 20px;">❖ 工具說明 ❖</button>
 
+    <div id="tip-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99; justify-content:center; align-items:center;">
+        <div style="background:#faf8f5; padding:20px; width:80%; max-width:400px; border:2px solid #8c2626; text-align:left; border-radius:5px;">
+            <h3 style="color:#8c2626; margin-top:0;">❖ 使用小撇步</h3>
+            <p style="font-size:0.9rem; line-height:1.6;">
+                1. <b>選擇題：</b>適合尚未開始背誦或較不熟悉者溫習，透過選項快速連結題意與答案。<br>
+                <br>
+                2. <b>填充題：</b>模擬真實考驗，檢測自己是否已深植於心，訓練更紮實的記憶。<br>
+                <br>
+                3. <b>精進選擇：</b>可自由開關優化選題。<br>
+                <br>        
+                4. <b>修辦津要進度：</b>可查看所有題目與攻克軌跡，清楚看見自己一點一滴累積的智慧與進度。<br>
+                <br>        
+                <b>祝各位前賢使用愉快，一起精進加油！</b>
+            </p>
+            <button onclick="closeTip()" style="width:100%; background:#8c2626; color:#fff; border:none; padding:8px;">返回</button>
+        </div>
+    </div>
+        
         <label>【 測驗模式 】</label>
         <div class="btn-group">
             <button type="button" id="mode-choice" onclick="selectMode('choice')">選擇題</button>
@@ -556,6 +575,7 @@
 
         <div id="area-fill" style="display: none;">
             <input type="text" id="fill-input" placeholder="請在此處輸入答案" autocomplete="off" onkeydown="if(event.keyCode==13) submitFill()"><br>
+            <p style="font-size: 0.8rem; color: #1A365D; margin: -15px 0 15px 0;">(多格答案回答，無論空格、逗號、頓號皆可辨別)</p>
             <button class="start-btn" style="font-size: 1.05rem; padding: 10px 40px; margin-top: 5px;" onclick="submitFill()">確認送出</button>
         </div>
     </div>
@@ -1466,6 +1486,12 @@
         updateMenuUI();
         renderDashboardData();
         switchScreen('screen-main'); 
+    }
+    function openTip() {
+        document.getElementById('tip-modal').style.display = 'flex';
+    }
+    function closeTip() {
+        document.getElementById('tip-modal').style.display = 'none';
     }
 </script></body>
 </html>
