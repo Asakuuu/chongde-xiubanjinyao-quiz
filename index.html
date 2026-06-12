@@ -1364,15 +1364,27 @@
         }
 
         container.style.outlineColor = isCorrect ? "#4a5d4c" : "#a63232";
-        if (!isCorrect) container.classList.add('shake-effect');
+
+        // 2. 根據結果觸發不同的動態
+        if (isCorrect) {
+            // 答對時：簡單放大容器或是邊框閃爍
+            container.style.transition = "outline-color 0.3s, transform 0.3s";
+            container.style.transform = "scale(1.01)"; 
+        } else {
+            // 答錯時：搖晃效果
+            container.classList.add('shake-effect');
+        }
 
         setTimeout(() => {
-            container.style.outlineColor = "#8c2626"; 
+            // 恢復原始狀態
+            container.style.outlineColor = "#8c2626";
+            container.style.transform = "scale(1)";
             container.classList.remove('shake-effect');
-            isTransitioning = false; 
+    
+            isTransitioning = false;
             currentIdx++;
             showQuestion();
-        }, 600);
+        }, 500);
     }
 
     function endGame() {
