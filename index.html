@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>修辦津要題庫測驗</title>
     <style>
-        /* --- 中式古風 / 紙張質感設計 --- */
         body {
             background-color: #e8e2d5; 
             color: #2a201b; 
@@ -17,11 +16,6 @@
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
-            
-            /* 全局防止手機版長按、手指滑動時題目字串反藍變白 */
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            user-select: none;
         }
 
         .container {
@@ -223,19 +217,22 @@
             border-radius: 2px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
             transition: all 0.2s ease;
+            
+            -webkit-tap-highlight-color: transparent; 
         }
 
-        /* 電腦版選項滑鼠移過去：改用優雅的古風壓暗（深米色），徹底捨棄深藍色 */
-        .option-btn:hover {
-            background-color: #eaddca;
-            color: #2a201b;
-            border-color: #9c8b74;
+        @media (hover: hover) {
+            .option-btn:hover {
+                background-color: #1a365d;
+                color: #ffffff;
+                border-color: #0f2441;
+            }
         }
 
-        /* 手機版觸控當下：給予輕微壓暗反饋，手放開立刻回彈，絕對不卡藍色 */
         .option-btn:active {
-            background-color: #dcd1be !important;
-            color: #2a201b !important;
+            background-color: #1a365d;
+            color: #ffffff;
+            border-color: #0f2441;
         }
 
         input[type="text"] {
@@ -360,9 +357,6 @@
             font-weight: bold;
             background-color: #a69a88 !important;
         }
-        .dot-unvisited { background-color: #e0dcd3; }
-        .dot-correct { background-color: #4a5d4c !important; }
-        .dot-wrong { background-color: #a63232 !important; }
 
         .all-questions-inspect-list {
             max-height: 400px;
@@ -465,7 +459,6 @@
             }
 
             .grid-header-row {
-                /* 手機版完美維持橫向排列：點選格框置左、重製進度置右 */
                 flex-direction: row !important;
                 justify-content: space-between !important;
                 align-items: center;
@@ -479,7 +472,7 @@
                 overflow-y: auto;
             }
             .grid-dot {
-                width: calc(12.5% - 4px); /* 手機一排完美填滿 8 格 */
+                width: calc(12.5% - 4px);
                 aspect-ratio: 1;
                 font-size: 11px !important;
                 font-weight: bold;
@@ -582,7 +575,7 @@
                 <!-- 右側：操作提示與重置按鈕 -->
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                     <span style="font-size: 11px; color: #1a365d; font-weight: bold; letter-spacing: 1px;">點擊框格快速瀏覽</span>
-                    <button type="button" class="view-detail-btn" style="color: #8c2626; border-color: #b8a68d; padding: 4px 10px; font-size: 0.8rem; margin: 0; display: inline-flex; align-items: center;" onclick="manualResetProgress()">重置全盤進度</button>
+                    <button type="button" class="view-detail-btn" style="color: #5d5249; border-color: #b8a68d; padding: 4px 10px; font-size: 0.8rem; margin: 0; display: inline-flex; align-items: center;" onclick="manualResetProgress()">重置全盤進度</button>
                 </div>
 
             </div>            
@@ -1042,16 +1035,16 @@
     { q: "393\n〈道脈傳承錄〉訓文的本訓是由哪幾位仙佛所批？", a: "達摩祖師、北海老人、濟公活佛、中華聖母。", tags: ["多人物"] },
     { q: "394\n第三篇〈竹圖訓〉的法會，遇到哪個天災？", a: "印尼亞齊大地震、南亞大海嘯。", tags: ["地點"], mask: "【格式提示】：________、________。此題有兩格答案，請依序填寫。" },
     { q: "395\n哪一代祖師開始辦理收圓？", a: "第十五代王祖覺一。", tags: ["人物"], mask: "【格式提示】：第__代____。請按照完整格式填入答案，以免漏字錯誤。" },
-    { q: "396\n開始傳禮本的是哪一位祖師？禮本從何而來？", a: "黃九祖、上天所賜。", tags: ["人物"], mask: "【格式提示】：____[人物]、____所賜。請按照完整格式填入答案，以免漏字錯誤。" },
+    { q: "396\n開始傳禮本的是哪一位祖師？禮本從何而來？", a: "黃九祖、上天所賜。", tags: ["人物"], mask: "【格式提示】：____、____所賜。請按照完整格式填入答案，以免漏字錯誤。" },
     { q: "397\n儒起釋終，祖師降火宅，起自哪一代祖師？", a: "後東方第七代，白祖、馬祖。", tags: ["多人物"], mask: "【格式提示】：____第__代，____、____。請按照完整格式填入答案，以免漏字錯誤。" },
     { q: "398\n北海老人是哪一位祖師？", a: "第十五代王祖覺一。", tags: ["人物"], mask: "【格式提示】：第__代____。請按照完整格式填入答案，以免漏字錯誤。" },
     { q: "399\n白陽初祖是誰？", a: "第十七代路祖中一。", tags: ["人物"], mask: "【格式提示】：第__代____。請按照完整格式填入答案，以免漏字錯誤。" },
-    { q: "400\n白陽期有幾代祖師？總共多少年？", a: "兩代祖師、一萬零八百年。", tags: ["人物"], mask: "【格式提示】：__月__日[農曆日期]、享年____歲。請按照完整格式填入答案，以免漏字錯誤。" },
+    { q: "400\n白陽期有幾代祖師？總共多少年？", a: "兩代祖師、一萬零八百年。", tags: ["人物"], mask: "【格式提示】：__代祖師、____年。請按照完整格式填入答案，以免漏字錯誤。" },
     ];
 
     let gameMode = null; 
     let totalQuestionsSetting = null; 
-    let bonusMode = null; // 'unvisited' (優先未出題), 'review' (錯題複習), null
+    let bonusMode = null;
     let currentQuestions = []; 
     let currentIdx = 0;
     let scoreCorrect = 0;
@@ -1069,7 +1062,6 @@
         if (!localStorage.getItem('修辦津要_通關軌跡')) {
             localStorage.setItem('修辦津要_通關軌跡', JSON.stringify({}));
         }
-        // 初始化通關輪數，預設第 1 輪
         if (!localStorage.getItem('修辦津要_通關輪數')) {
             localStorage.setItem('修辦津要_通關輪數', '1');
         }
@@ -1225,10 +1217,9 @@
         else if (bonusMode === 'unvisited') {
             pool = rawQuestionBank.filter(item => !progressMap[item.q]);
             
-            // 當全部 400 題（本範例依據陣列長度）都出過時，自動觸發重置並進到下一輪
             if (pool.length === 0) {
-                incrementRound(); // 輪數加 1
-                localStorage.setItem('修辦津要_通關軌跡', JSON.stringify({})); // 重置通關軌跡
+                incrementRound();
+                localStorage.setItem('修辦津要_通關軌跡', JSON.stringify({})); 
                 progressMap = {};
                 alert(`恭喜您！完整修辦考題已全數攻克！\n系統已自動為您重置題庫，進入【第 ${getRoundCount()} 輪】全局挑戰！`);
                 pool = [...rawQuestionBank];
@@ -1279,29 +1270,33 @@
                 btn.dataset.ans = options[i] || "以上皆非";
                 
                 btn.className = 'option-btn'; 
-                btn.style.backgroundColor = ""; 
-                btn.style.color = "";
-                btn.style.borderColor = "";
-                btn.style.borderBottom = "";
-                btn.style.borderLeftColor = "";
+                
+                btn.style.removeProperty('background-color');
+                btn.style.removeProperty('color');
+                btn.style.removeProperty('border-color');
+                btn.style.removeProperty('border-bottom');
+                btn.style.removeProperty('border-left-color');
+                
                 btn.blur();
             }
+
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+            
         } else {
             document.getElementById('area-choice').style.display = 'none';
             document.getElementById('area-fill').style.display = 'block';
             document.getElementById('fill-input').value = '';
             document.getElementById('fill-input').focus();
 
-            // === 完美的 mask 欄位讀取邏輯 ===
             const tipEl = document.getElementById('fill-tip');
             
             if (tipEl) {
                 if (qData.mask) {
-                    // 如果題目有額外設定 mask，則顯示自訂的特殊提示
                     tipEl.innerText = qData.mask;
                     tipEl.style.color = "#1A365D";
                 } else {
-                    // 如果題目沒有 mask，嚴格還原成你指定的通規提示
                     tipEl.innerText = "【提示】：若遇多格答案，請依序輸入，答案之間空格、逗號、頓號皆可辨別";
                     tipEl.style.color = "#1A365D";
                 }
@@ -1310,10 +1305,9 @@
     }
 
     function generateSmartOptions(currentQData) {
-        let correctAns = currentQData.a.trim(); // 去除前後可能的微小空白
+        let correctAns = currentQData.a.trim();
         let currentTags = currentQData.tags || [];
 
-        // 1. 先找尋帶有相同標籤的潛在錯誤答案庫
         let targetedPool = rawQuestionBank.filter(item => {
             if (item.a.trim() === correctAns) return false;
             let itemTags = item.tags || [];
@@ -1325,7 +1319,6 @@
         
         let selectedWrong = wrongAnswers.slice(0, 3);
 
-        // 2. 如果同標籤的錯誤答案不夠 3 個，從全題庫抓取補充答案
         if (selectedWrong.length < 3) {
             let allPool = rawQuestionBank
                 .filter(item => item.a.trim() !== correctAns)
@@ -1341,15 +1334,12 @@
             }
         }
 
-        // 3. 萬一題庫極端不足（雖然有400題不可能發生，但寫好嚴格防呆）
         while (selectedWrong.length < 3) {
             selectedWrong.push("以上皆非");
         }
 
-        // 4. 合併正確答案與三個錯誤答案，並再次透過 Set 確保絕對去重後隨機排序
         let finalOptions = [...new Set([correctAns, ...selectedWrong])];
         
-        // 確保最終一定有 4 個選項輸出
         while (finalOptions.length < 4) {
             finalOptions.push("無其他選項");
         }
@@ -1377,10 +1367,8 @@
         function normalizeText(text) {
             if (!text) return { origin: "", digit: "", chinese: "" };
     
-            // 1. 【核心修正】清除所有可能的標點符號，包含底線 _、引號、括號、減號，徹底防呆
             let clean = text.replace(/[。，、；：：？?.,;: \s（）()\[\]【】""''「」『』_—\-_]/g, "");
     
-            // 2. 建立雙向映射表（一到九與1到9的對調）
             const numMap = {
                 '一': '1', '二': '2', '三': '3', '四': '4', '五': '5', 
                 '六': '6', '七': '7', '八': '8', '九': '9', '〇': '0', '零': '0', '兩': '2'
@@ -1391,13 +1379,11 @@
                 reverseNumMap[numMap[key]] = key;
             }
 
-            // 轉成純數字傾向（例如：清光緒二十七年 -> 清光緒27年）
-            // 這裡引入白陽期特殊優化：先把常見的十、百、千、萬轉掉或移除，確保年份不會打結
             let digitStyle = clean;
-            // 智慧型替換「二十七」這種類型為「27」
+
             const chineseNumRegex = /[一二三四五六七八九十百千萬兩〇零]+/g;
             digitStyle = digitStyle.replace(chineseNumRegex, function(match) {
-                // 如果帶有「十」，做簡易的白陽白話進位解析（如二十二->22, 十五->15）
+
                 if (match.includes('十')) {
                     if (match === '十') return '10';
                     let parts = match.split('十');
@@ -1405,20 +1391,19 @@
                     let units = parts[1] ? (numMap[parts[1]] || 0) : 0;
                     return (parseInt(tens) * 10 + parseInt(units)).toString();
                 }
-                // 如果沒有十（如一九〇一），就直接單字對換
+
                 let sub = match;
                 for (let key in numMap) { sub = sub.split(key).join(numMap[key]); }
                 return sub;
             });
-            // 防呆：再次清理殘留的「十」
+
             digitStyle = digitStyle.split('十').join(''); 
         
-            // 轉成純國字傾向（如：27 -> 二七）
             let chineseStyle = clean;
             for (let key in reverseNumMap) {
                 chineseStyle = chineseStyle.split(key).join(reverseNumMap[key]);
             }
-            // 防呆：把國字傾向中的「十」也拿掉，讓兩邊對齊純數值
+
             chineseStyle = chineseStyle.split('十').join('');
 
             return {
@@ -1435,17 +1420,15 @@
         if (gameMode === 'choice') {
             isCorrect = (playerAns === currentCorrectAns);
         } else {
-            // 新程式碼：支援數字、國字雙向模糊比對
+
             let keywords = currentCorrectAns.split(/[,，、]/).filter(w => w.length > 0);
 
-            // 把玩家輸入的各種排列組合準備好
+
             let pNormalized = normalizeText(playerAns);
 
             isCorrect = keywords.every(kw => {
                 let kwNormalized = normalizeText(kw);
     
-                // 只要玩家輸入的「純文字」、「純數字版」或「純國字版」，
-                // 有任何一個包含了題目的關鍵字組合，這一個關鍵字就判定答對！
                 return pNormalized.origin.includes(kwNormalized.origin) ||
                        pNormalized.digit.includes(kwNormalized.digit) ||
                        pNormalized.chinese.includes(kwNormalized.chinese);
@@ -1470,18 +1453,15 @@
         const container = document.getElementById('main-container');
         if (gameMode === 'choice') {
             if (isCorrect) {
-                // 答對：目前點選的按鈕變綠（加上 !important 確保強制蓋過 Hover 顏色）
                 if (choiceIndex !== null) {
                     document.getElementById(`opt-${choiceIndex}`).style.setProperty('background-color', '#4a5d4c', 'important');
                     document.getElementById(`opt-${choiceIndex}`).style.setProperty('color', '#ffffff', 'important');
                 }
             } else {
-                // 答錯：點選的變紅（加上 !important，滑鼠沒移開也一定立刻變紅！）
                 if (choiceIndex !== null) {
                     document.getElementById(`opt-${choiceIndex}`).style.setProperty('background-color', '#a63232', 'important');
                     document.getElementById(`opt-${choiceIndex}`).style.setProperty('color', '#ffffff', 'important');
                 }
-                // 自動巡檢 4 個選項，把「正確答案」那一格找出來強制反綠
                 for (let i = 0; i < 4; i++) {
                     let optBtn = document.getElementById(`opt-${i}`);
                     if (optBtn.dataset.ans === currentCorrectAns) {
@@ -1495,34 +1475,39 @@
 
         container.style.outlineColor = isCorrect ? "#4a5d4c" : "#a63232";
 
-        // 2. 根據結果觸發不同的動態
         if (isCorrect) {
-            // 改成上下律動的打勾視覺感（先微蹲、再上彈、最後恢復）
             container.style.transition = "outline-color 0.2s, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
-            
-            // 觸發由下往上挺拔的打勾動態（向下位移並縮小 -> 往上彈高 -> 回到原位）
             container.style.transform = "translateY(6px) scale(0.98)";
             
             setTimeout(() => {
                 container.style.transform = "translateY(-12px) scale(1.02)";
             }, 120);
             
-            // 邊框染綠色，並給予更明顯的綠色發光外陰影 (視覺感大提升)
             container.style.outlineColor = "#4a5d4c";
             container.style.boxShadow = "0 12px 35px rgba(74, 93, 76, 0.3), 0 0 15px rgba(74, 93, 76, 0.5)";
         } else {
-            // 答錯時：搖晃效果
             container.classList.add('shake-effect');
             container.style.boxShadow = "0 12px 35px rgba(166, 50, 50, 0.3), 0 0 15px rgba(166, 50, 50, 0.5)";
         }
 
         setTimeout(() => {
-            // 恢復原始古風紅與原本的紙張陰影
             container.style.outlineColor = "#8c2626";
             container.style.transform = "translateY(0) scale(1)";
             container.style.boxShadow = "0 12px 35px rgba(42, 32, 27, 0.15)"; 
             container.classList.remove('shake-effect');
-    
+
+            for (let i = 0; i < 4; i++) {
+                let optBtn = document.getElementById(`opt-${i}`);
+                if (optBtn) {
+                    let clonedBtn = optBtn.cloneNode(true);
+                    optBtn.parentNode.replaceChild(clonedBtn, optBtn);
+                }
+            }
+
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+            
             isTransitioning = false;
             currentIdx++;
             showQuestion();
@@ -1580,7 +1565,6 @@
         gridContainer.innerHTML = '';
         let progressMap = getProgressMap();
 
-        // 於全局攻克檢索處同步顯示當前輪數
         let roundStr = getRoundCount() > 1 ? ` (第 ${getRoundCount()} 輪)` : '';
         gridTitle.innerText = `❖ 全局攻克軌跡${roundStr}`;
 
@@ -1653,7 +1637,6 @@
             localStorage.removeItem('修辦津要_錯題本');
             localStorage.setItem('修辦津要_通關輪數', '1');
             alert("進度已成功重置，請重新刷新網頁");
-            window.location.reload(); // 重整網頁，自動刷回主畫面並清空狀態
         }
     }
 </script></body>
