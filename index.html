@@ -17,6 +17,11 @@
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
+            
+            /* 全局防止手機版長按、手指滑動時題目字串反藍變白 */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
         }
 
         .container {
@@ -219,11 +224,18 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
             transition: all 0.2s ease;
         }
+
+        /* 電腦版選項滑鼠移過去：改用優雅的古風壓暗（深米色），徹底捨棄深藍色 */
         .option-btn:hover {
-            background-color: #1a365d;
-            color: #faf7f2;
-            border-color: #102543;
-            border-left-color: #4a7bb0;
+            background-color: #eaddca;
+            color: #2a201b;
+            border-color: #9c8b74;
+        }
+
+        /* 手機版觸控當下：給予輕微壓暗反饋，手放開立刻回彈，絕對不卡藍色 */
+        .option-btn:active {
+            background-color: #dcd1be !important;
+            color: #2a201b !important;
         }
 
         input[type="text"] {
@@ -453,9 +465,11 @@
             }
 
             .grid-header-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
+                /* 手機版完美維持橫向排列：點選格框置左、重製進度置右 */
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center;
+                width: 100%;
             }
             .grid-container {
                 display: flex !important;
@@ -479,25 +493,6 @@
             }
             button:focus {
                 outline: none;
-            }
-        }
-        @media (hover: hover) {
-            .option-btn:hover {
-                background-color: #1a365d;
-                color: #faf7f2;
-                border-color: #102543;
-                border-left-color: #4a7bb0;
-            }
-            button:hover {
-                background-color: #eaddca;
-                color: #2a201b;
-                border-color: #9c8b74;
-            }
-        }
-        /* 手機觸控當下的微小反饋 */
-        @media (hover: none) {
-            .option-btn:active {
-                background-color: #eaddca;
             }
         }
     </style>
@@ -528,7 +523,7 @@
                 4. <b>修辦津要進度：</b>隨時檢索所有題目與攻克軌跡，清楚看見一點一滴累積的智慧與修辦成果。<br>
                 <br>        
                 <b>祝福各位前賢使用愉快！在修辦路上一起精進加油。</b><br>
-                若使用過程中有任何疑慮或指教，歡迎聯絡一同完善~
+                若有任何疑慮或指教，歡迎聯絡一同完善~
             </p>
             <button onclick="closeTip()" style="width:100%; background:#8c2626; color:#fff; border:none; padding:8px;">返回</button>
         </div>
@@ -624,7 +619,7 @@
             <input type="text" id="fill-input" placeholder="請在此處輸入答案" autocomplete="off" onkeydown="if(event.keyCode==13) submitFill()"><br>
     
             <div style="background-color: #fcfaf2; border: 1px dashed #b8a68d; padding: 12px; margin: -10px auto 20px auto; width: 90%; border-radius: 4px;">
-                <p id="fill-tip" style="font-size: 0.85rem; color: #1A365D; margin: 0; line-height: 1.5; white-space: pre-line; text-align: left;"></p>
+                <p id="fill-tip" style="font-size: 0.85rem; color: #1A365D; margin: 0; line-height: 1.5; white-space: pre-line; text-align: center;"></p>
             </div>
     
             <button class="start-btn" style="font-size: 1.05rem; padding: 10px 40px; margin-top: 5px;" onclick="submitFill()">確認送出</button>
@@ -1288,6 +1283,8 @@
                 btn.style.color = "";
                 btn.style.borderColor = "";
                 btn.style.borderBottom = "";
+                btn.style.borderLeftColor = "";
+                btn.blur();
             }
         } else {
             document.getElementById('area-choice').style.display = 'none';
@@ -1473,23 +1470,23 @@
         const container = document.getElementById('main-container');
         if (gameMode === 'choice') {
             if (isCorrect) {
-                // 答對：目前點選的按鈕變綠
+                // 答對：目前點選的按鈕變綠（加上 !important 確保強制蓋過 Hover 顏色）
                 if (choiceIndex !== null) {
-                    document.getElementById(`opt-${choiceIndex}`).style.backgroundColor = "#4a5d4c";
-                    document.getElementById(`opt-${choiceIndex}`).style.color = "#ffffff";
+                    document.getElementById(`opt-${choiceIndex}`).style.setProperty('background-color', '#4a5d4c', 'important');
+                    document.getElementById(`opt-${choiceIndex}`).style.setProperty('color', '#ffffff', 'important');
                 }
             } else {
-                // 答錯：點選的變紅
+                // 答錯：點選的變紅（加上 !important，滑鼠沒移開也一定立刻變紅！）
                 if (choiceIndex !== null) {
-                    document.getElementById(`opt-${choiceIndex}`).style.backgroundColor = "#a63232";
-                    document.getElementById(`opt-${choiceIndex}`).style.color = "#ffffff";
+                    document.getElementById(`opt-${choiceIndex}`).style.setProperty('background-color', '#a63232', 'important');
+                    document.getElementById(`opt-${choiceIndex}`).style.setProperty('color', '#ffffff', 'important');
                 }
                 // 自動巡檢 4 個選項，把「正確答案」那一格找出來強制反綠
                 for (let i = 0; i < 4; i++) {
                     let optBtn = document.getElementById(`opt-${i}`);
                     if (optBtn.dataset.ans === currentCorrectAns) {
-                        optBtn.style.backgroundColor = "#4a5d4c"; // 轉為古風綠
-                        optBtn.style.color = "#ffffff";
+                        optBtn.style.setProperty('background-color', '#4a5d4c', 'important');
+                        optBtn.style.setProperty('color', '#ffffff', 'important');
                         optBtn.style.borderLeftColor = "#81c784";
                     }
                 }
