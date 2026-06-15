@@ -317,9 +317,10 @@
         }
         .grid-container {
             display: grid;
+            /* 調整為 20 欄 */
             grid-template-columns: repeat(20, 1fr);
-            gap: 3px;
-            max-height: 120px;
+            gap: 4px;
+            max-height: 160px; /* 稍微拉高一點點讓帶數字的格子更舒適 */
             overflow-y: auto;
             padding-right: 3px;
             margin-top: 8px;
@@ -327,17 +328,23 @@
         .grid-dot {
             aspect-ratio: 1;
             background-color: #e0dcd3;
-            border-radius: 1px;
-            font-size: 8px;
-            color: transparent;
+            border-radius: 2px;
+            font-size: 10px;       /* 設定適合方格的字體大小 */
+            font-weight: bold;
+            color: #776c60;        /* 未挑戰時的數字顏色，呈現淡淡古風 */
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.15s ease;
         }
+        /* 讓已攻克與待複習的格子維持高對比的白色數字 */
+        .dot-unvisited { background-color: #e0dcd3; color: #776c60; }
+        .dot-correct { background-color: #4a5d4c !important; color: #ffffff !important; }
+        .dot-wrong { background-color: #a63232 !important; color: #ffffff !important; }
+
         .grid-dot:hover {
-            color: #fff;
+            color: #fff !important;
             font-weight: bold;
             background-color: #a69a88 !important;
         }
@@ -436,6 +443,8 @@
             .db-header > div {
                 margin-left: auto;
                 margin-top: 4px;
+                display: flex;
+                gap: 5px;
             }
             .view-detail-btn { 
                 padding: 6px 12px; 
@@ -449,14 +458,20 @@
                 gap: 6px;
             }
             .grid-container {
-                grid-template-columns: repeat(8, 1fr) !important;
-                gap: 5px;
-                max-height: 220px;
+                display: flex !important;
+                flex-wrap: wrap;
+                gap: 4px;
+                max-height: 250px;
+                overflow-y: auto;
             }
             .grid-dot {
-                font-size: 10px;
+                width: calc(12.5% - 4px); /* 手機一排完美填滿 8 格 */
+                aspect-ratio: 1;
+                font-size: 11px !important;
+                font-weight: bold;
             }
-
+            .dot-correct { color: #ffffff !important; }
+            .dot-wrong { color: #ffffff !important; }
             .option-btn { font-size: 0.95rem; padding: 12px 15px; }
 
             button {
@@ -464,6 +479,25 @@
             }
             button:focus {
                 outline: none;
+            }
+        }
+        @media (hover: hover) {
+            .option-btn:hover {
+                background-color: #1a365d;
+                color: #faf7f2;
+                border-color: #102543;
+                border-left-color: #4a7bb0;
+            }
+            button:hover {
+                background-color: #eaddca;
+                color: #2a201b;
+                border-color: #9c8b74;
+            }
+        }
+        /* 手機觸控當下的微小反饋 */
+        @media (hover: none) {
+            .option-btn:active {
+                background-color: #eaddca;
             }
         }
     </style>
@@ -478,21 +512,23 @@
         <h1>修辦津要題庫測驗</h1>
         <div class="title-line"></div>
         <h2>溫故知新，精進修辦資糧</h2>
-    <button type="button" onclick="openTip()" style="background: none; border: 1px solid #8c2626; color: #8c2626; padding: 2px 10px; font-size: 0.8rem; border-radius: 10px; margin-bottom: 20px;">❖ 工具說明 ❖</button>
+    <button type="button" onclick="openTip()" style="background: none; border: 1px solid #8c2626; color: #8c2626; padding: 2px 10px; font-size: 0.8rem; border-radius: 10px; margin-bottom: 20px;">❖ 點擊查看工具說明 ❖</button>
 
     <div id="tip-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99; justify-content:center; align-items:center;">
         <div style="background:#faf8f5; padding:20px; width:80%; max-width:400px; border:2px solid #8c2626; text-align:left; border-radius:5px;">
             <h3 style="color:#8c2626; margin-top:0;">❖ 使用小撇步</h3>
             <p style="font-size:0.9rem; line-height:1.6;">
-                1. <b>選擇題：</b>適合尚未開始背誦或較不熟悉者溫習，透過選項快速連結題意與答案。<br>
+                1. <b>選擇題模式：</b>適合初學溫習或尚未熟背者使用，藉由選項對照，幫助快速連結題意與答案。<br>
                 <br>
-                2. <b>填充題：</b>模擬真實考驗，檢測自己是否已深植於心，訓練更紮實的記憶。<br>
+                2. <b>填充題模式：</b>模擬真實考驗，檢測是否已將基礎道學深植於心，真修實煉，鍛鍊出更紮實的記憶。<br>
                 <br>
-                3. <b>精進選擇：</b>可自由開關優化選題。<br>
+                3. <b>精進選擇：</b>可自由開啟或關閉優化選題。<br>
+                ＊ 若「優先未出題」或「錯題複習」的剩餘題數不足最低設定15題，測驗將以實際剩餘題數為準。<br>
                 <br>        
-                4. <b>修辦津要進度：</b>可查看所有題目與攻克軌跡，清楚看見自己一點一滴累積的智慧與進度。<br>
+                4. <b>修辦津要進度：</b>隨時檢索所有題目與攻克軌跡，清楚看見一點一滴累積的智慧與修辦成果。<br>
                 <br>        
-                <b>祝各位前賢使用愉快，一起精進加油！</b>
+                <b>祝福各位前賢使用愉快！在修辦路上一起精進加油。</b><br>
+                若使用過程中有任何疑慮或指教，歡迎聯絡一同完善~
             </p>
             <button onclick="closeTip()" style="width:100%; background:#8c2626; color:#fff; border:none; padding:8px;">返回</button>
         </div>
@@ -523,7 +559,7 @@
         <div class="dashboard-classic">
             <div class="db-header">
                 <span class="db-header-title" id="db-main-title">❖ 400 題挑戰進度</span>
-                <div style="display: flex; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 6px;">
                     <span id="db-ratio" style="margin-right: 12px; font-size: 0.95rem;">已挑戰: 0 / 400 題 (0%)</span>
                     <button type="button" class="view-detail-btn" onclick="goToInspectPage()">查看全題</button>
                 </div>
@@ -539,10 +575,21 @@
         <div class="title-line" style="width: 160px; margin-bottom: 20px;"></div>
         
         <div class="big-grid-box">
-            <div class="grid-header-row">
-                <div style="font-weight: bold; color: #8c2626; font-size: 1.05rem;" id="inspect-grid-title">❖ 全局攻克軌跡</div>
-                <div class="grid-legend-inline">綠色=已攻克 ｜ 紅色=待複習 ｜ 灰色=未出題</div>
-                <div style="font-size: 11px; color: #1a365d; font-weight: bold; letter-spacing: 1px;">點擊框格快速瀏覽</div>
+            <!-- 優化後的標題列：強制垂直居中，並支援自動換行防擠壓 -->
+            <div class="grid-header-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                
+                <!-- 左側：標題與圖例說明 -->
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <div style="font-weight: bold; color: #8c2626; font-size: 1.05rem;" id="inspect-grid-title">❖ 全局攻克軌跡</div>
+                    <div class="grid-legend-inline" style="margin: 0;">綠色=已攻克 ｜ 紅色=待複習 ｜ 灰色=未出題</div>
+                </div>
+                
+                <!-- 右側：操作提示與重置按鈕 -->
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="font-size: 11px; color: #1a365d; font-weight: bold; letter-spacing: 1px;">點擊框格快速瀏覽</span>
+                    <button type="button" class="view-detail-btn" style="color: #8c2626; border-color: #b8a68d; padding: 4px 10px; font-size: 0.8rem; margin: 0; display: inline-flex; align-items: center;" onclick="manualResetProgress()">重置全盤進度</button>
+                </div>
+
             </div>            
             <div class="grid-container" id="inspect-dots-container"></div>
         </div>
@@ -607,14 +654,14 @@
     { q: "4\n道場是我們求道、_________、_________、_________、_________及行道的地方。", a: "學道、修道、講道、辦道。", tags: ["道義"] },
     { q: "5\n在先天，我們的靈性都來自_________，是　明明上帝所分化的。", a: "無極理天。", tags: ["道義"] },
     { q: "6\n明明上帝全名為何？\n明明上帝_________清虛_________至聖_________十方_________真宰。", a: "無量、至尊、三界、萬靈。", tags: ["道義"] },
-    { q: "7\n在現世修辦的因緣，我們都是一代明師_________、_________的弟子，是_________、_________的後學。", a: "濟公活佛（天然古佛）、月慧菩薩（中華聖母）、白水聖帝（老前人）、不休息菩薩（前人）。", tags: ["多人物"] },
+    { q: "7\n在現世修辦的因緣，我們都是一代明師_________、_________的弟子，是_________、_________的後學。", a: "濟公活佛（天然古佛）、月慧菩薩（中華聖母）、白水聖帝（老前人）、不休息菩薩（前人）。", tags: ["多人物"], mask: "【格式提示】：" },
     { q: "8\n道場的理想，師尊的三大宏願為何？\n（1）在先天，_________，達本還源。\n（2）在後天，復興_________。\n（3）移風易俗，化世界為大同。", a: "渡化眾生、中華道統文化。", tags: ["道義"] },
     { q: "9\n發一崇德成立有七個文教基金會，是哪七個文教基金會？", a: "崇德、崇仁、崇禮、崇義、光慧、崇智、崇元。", tags: ["組織"] },
     { q: "10\n一貫真傳的殊勝非語言文字可以道盡，其中又以哪三者最為殊勝？", a: "天命真傳、道統真傳、心法真傳。", tags: ["道義"] },
     { q: "11\n從我們求道，我們的祖先在地府領一朵白蓮花，聽地藏古佛講經說法，免受地府之苦，這就是所謂的「一子求道，_________」。", a: "九玄七祖皆沾光。", tags: ["道義"] },
-    { q: "12\n路祖的名諱是？哪裡人？生於何時？", a: "上中下一、山東濟寧、清道光二十九年（一八四九）農曆四月二十四日。", tags: ["名地生"] },
+    { q: "12\n路祖的名諱是？哪裡人？生於何時？", a: "上中下一、山東濟寧、清道光二十九年（一八四九）農曆四月二十四日。", tags: ["名地生"], mask: "【格式提示】：上___下___、______、朝代______年（西元______）農曆___月___日。" },
     { q: "13\n路祖乃什麼佛化身？為後東方第幾代祖師？", a: "彌勒古佛、後東方第十七代祖。", tags: ["人物"] },
-    { q: "14\n路祖於民國十四年（一九二五）歲次乙丑_________日歸天，享年幾歲？", a: "二月初二、享年七十六歲。", tags: ["日歲"] },
+    { q: "14\n路祖於民國十四年（一九二五）歲次乙丑_________日歸天，享年幾歲？", a: "二月初二、享年七十六歲。", tags: ["日歲"], mask: "【格式提示】：__下__、字上__下__、聖號" },
     { q: "15\n路祖歸天後　老母有命，由路祖的妹妹路老姑奶代理天命，其名諱？", a: "上中下節。", tags: ["名"] },
     { q: "16\n路祖在世辦道時，最初規定超拔一層父母須渡多少人？", a: "一百。", tags: ["數字"] },
     { q: "17\n路祖歸天後一年，借山西楊春齡竅，來山東濟寧道場顯化，在一百天內，口吐何妙典？又說何經傳世？", a: "金公妙典、彌勒救苦真經。", tags: ["經典名字"] },
@@ -757,8 +804,8 @@
     { q: "154\n父母的職責乃照顧孩子的_________。", a: "身心靈。", tags: ["道義"] },
     { q: "155\n佛堂供茶應倒約幾分滿？供果洗淨拭乾。", a: "七。", tags: ["數字"] },
     { q: "156\n家庭佛堂獻香共幾炷？\n明明上帝_________炷、諸天神聖_________炷、灶君_________炷。", a: "九、五、三、一。", tags: ["數字"] },
-    { q: "157\n公共佛堂獻香幾炷？（十五炷。）其順序為何？\n_________五炷、_________三炷、_________三炷、南海古佛三炷、灶君一炷。", a: "明明上帝、諸天神聖、彌勒祖師。", tags: ["佛規"] },
-    { q: "158\n每日獻香時間為何？", a: "早上五點到七點、晚上五點到七點。", tags: ["佛規"] },
+    { q: "157\n公共佛堂獻香幾炷？（十五炷。）其順序為何？\n_________五炷、_________三炷、_________三炷、南海古佛三炷、灶君一炷。", a: "明明上帝、諸天神聖、彌勒祖師。", tags: ["多人物"] },
+    { q: "158\n每日獻香時間為何？", a: "早晨五點到七點、晚上五點至七點。", tags: ["佛規"] },
     { q: "159\n前人老乘願再來誕生在河北省_________市，_________歲求得寶貴大道。", a: "天津、十八歲（民國二十九年、一九四〇）。", tags: ["地生"] },
     { q: "160\n前人老求道之後發心渡人，後來經哪位菩薩慈悲點化而立下清口茹素愿？", a: "觀音菩薩。", tags: ["人物"] },
     { q: "161\n前人首次謁見師尊，蒙師尊慈勉：「妳願學_________，一定能成功，我等妳，錯不了，錯不了。」是日後前人修辦最大的原動力。", a: "觀音菩薩。", tags: ["人物"] },
@@ -1243,29 +1290,42 @@
             document.getElementById('area-fill').style.display = 'block';
             document.getElementById('fill-input').value = '';
             document.getElementById('fill-input').focus();
+
+            // === 完美的 mask 欄位讀取邏輯 ===
+            const tipEl = document.getElementById('fill-tip');
+            
+            if (qData.mask) {
+                tipEl.innerText = qData.mask;
+                tipEl.style.color = "#1A365D"; 
+            } else {
+                tipEl.innerText = "【提示】：若遇多格答案，請依序輸入，答案之間空格、逗號、頓號皆可辨別";
+                tipEl.style.color = "#1A365D"; // 提示維持原有的深藍色
+            }
         }
     }
 
     function generateSmartOptions(currentQData) {
-        let correctAns = currentQData.a;
+        let correctAns = currentQData.a.trim(); // 去除前後可能的微小空白
         let currentTags = currentQData.tags || [];
 
+        // 1. 先找尋帶有相同標籤的潛在錯誤答案庫
         let targetedPool = rawQuestionBank.filter(item => {
-            if (item.a === correctAns) return false;
+            if (item.a.trim() === correctAns) return false;
             let itemTags = item.tags || [];
             return currentTags.some(t => itemTags.includes(t));
         });
 
-        let wrongAnswers = [...new Set(targetedPool.map(item => item.a))];
+        let wrongAnswers = [...new Set(targetedPool.map(item => item.a.trim()))];
         wrongAnswers.sort(() => 0.5 - Math.random());
-    
+        
         let selectedWrong = wrongAnswers.slice(0, 3);
 
+        // 2. 如果同標籤的錯誤答案不夠 3 個，從全題庫抓取補充答案
         if (selectedWrong.length < 3) {
             let allPool = rawQuestionBank
-                .filter(item => item.a !== correctAns)
-                .map(item => item.a);
-        
+                .filter(item => item.a.trim() !== correctAns)
+                .map(item => item.a.trim());
+            
             let uniqueAllPool = [...new Set(allPool)].sort(() => 0.5 - Math.random());
 
             for (let f of uniqueAllPool) {
@@ -1276,19 +1336,19 @@
             }
         }
 
-        if (selectedWrong.length < 3) {
-            let fillers = ["家壇、公壇。", "學道、修道、講道、辦道。", "無極理天。"];
-            fillers.forEach(f => {
-                if (selectedWrong.length < 3 && f !== correctAns && !selectedWrong.includes(f)) {
-                    selectedWrong.push(f);
-                }
-            });
-        }
+        // 3. 萬一題庫極端不足（雖然有400題不可能發生，但寫好嚴格防呆）
         while (selectedWrong.length < 3) {
             selectedWrong.push("以上皆非");
         }
 
-        let finalOptions = [correctAns, ...selectedWrong];
+        // 4. 合併正確答案與三個錯誤答案，並再次透過 Set 確保絕對去重後隨機排序
+        let finalOptions = [...new Set([correctAns, ...selectedWrong])];
+        
+        // 確保最終一定有 4 個選項輸出
+        while (finalOptions.length < 4) {
+            finalOptions.push("無其他選項");
+        }
+
         return finalOptions.sort(() => 0.5 - Math.random());
     }
 
@@ -1504,6 +1564,15 @@
     }
     function closeTip() {
         document.getElementById('tip-modal').style.display = 'none';
+    }
+    function manualResetProgress() {
+        if (confirm("您確定要重置所有的測驗進度與錯題本嗎？\n此動作將清空所有通關軌跡，並從第 1 輪重新開始。")) {
+            localStorage.removeItem('修辦津要_通關軌跡');
+            localStorage.removeItem('修辦津要_錯題本');
+            localStorage.setItem('修辦津要_通關輪數', '1');
+            alert("進度已成功重置！");
+            window.location.reload(); // 重整網頁，自動刷回主畫面並清空狀態
+        }
     }
 </script></body>
 </html>
