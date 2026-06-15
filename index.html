@@ -1566,11 +1566,11 @@
         document.getElementById('tip-modal').style.display = 'none';
     }
     function manualResetProgress() {
-        if (confirm("您確定要重置所有的測驗進度與錯題本嗎？\n此動作將清空所有通關軌跡，並從第 1 輪重新開始。")) {
+        if (confirm("確定要重置所有的測驗進度與錯題本嗎？\n此動作將清空所有通關軌跡，並從第 1 輪重新開始。")) {
             localStorage.removeItem('修辦津要_通關軌跡');
             localStorage.removeItem('修辦津要_錯題本');
             localStorage.setItem('修辦津要_通關輪數', '1');
-            alert("進度已成功重置！");
+            alert("進度已成功重置，請重新刷新網頁");
             window.location.reload(); // 重整網頁，自動刷回主畫面並清空狀態
         }
     }
