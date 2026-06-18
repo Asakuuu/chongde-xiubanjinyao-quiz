@@ -1129,8 +1129,8 @@
         let percent = totalCount > 0 ? Math.round((visitedCount / totalCount) * 100) : 0;
         let roundStr = getRoundCount() > 1 ? ` (第 ${getRoundCount()} 輪)` : '';
         
-        mainTitle.innerText = `❖ 400 題修辦津要進度${roundStr}`;
-        ratioText.innerText = `已挑戰: ${visitedCount} / ${totalCount} 題 (${percent}%)`;
+        mainTitle.innerText = `❖ 修辦津要進度${roundStr}`;
+        ratioText.innerText = `已挑戰： ${visitedCount} / ${totalCount} 題 (${percent}%)`;
         barInner.style.width = `${percent}%`;
     }
 
