@@ -1367,49 +1367,67 @@
         function normalizeText(text) {
             if (!text) return { origin: "", digit: "", chinese: "" };
     
+            // 1. 移除所有標點符號與空白
             let clean = text.replace(/[。，、；：：？?.,;: \s（）()\[\]【】""''「」『』_—\-_]/g, "");
     
-            const numMap = {
-                '一': '1', '二': '2', '三': '3', '四': '4', '五': '5', 
-                '六': '6', '七': '7', '八': '8', '九': '9', '〇': '0', '零': '0', '兩': '2'
-            };
-    
-            const reverseNumMap = {};
-            for (let key in numMap) {
-                reverseNumMap[numMap[key]] = key;
+            // 2. 定義中文數字轉阿拉伯數字的解析函式 (支援十、百、千、萬)
+            function chineseToNumber(cnStr) {
+                const charMap = {
+                    '零':0, '〇':0, '一':1, '二':2, '兩':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9,
+                    '0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9
+                };
+                const unitMap = { '十':10, '百':100, '千':1000, '萬':10000 };
+                
+                let total = 0;
+                let r = 0; // 當前累積的暫存數 (用於處理萬以上的位數)
+                let temp = 0; // 當前位數乘積的基數
+                
+                for (let i = 0; i < cnStr.length; i++) {
+                    let char = cnStr[i];
+                    if (charMap[char] !== undefined) {
+                        temp = charMap[char];
+                        if (i === cnStr.length - 1) {
+                            r += temp;
+                        }
+                    } else if (unitMap[char] !== undefined) {
+                        let unit = unitMap[char];
+                        if (unit === 10000) {
+                            if (temp === 0 && r === 0) temp = 1; // 針對 "萬" 
+                            r += temp;
+                            total += (r * 10000);
+                            r = 0;
+                            temp = 0;
+                        } else {
+                            if (temp === 0) temp = 1; // 針對 "十" (如：十五 -> temp=1, unit=10)
+                            r += (temp * unit);
+                            temp = 0;
+                        }
+                    }
+                }
+                total += r;
+                return total.toString();
             }
 
-            let digitStyle = clean;
-
+            // 3. 匹配字串中所有的中文數字區塊，並將其統一轉換為阿拉伯數字字串
+            // 匹配範圍：一到九、十、百、千、萬、兩、零、〇
             const chineseNumRegex = /[一二三四五六七八九十百千萬兩〇零]+/g;
-            digitStyle = digitStyle.replace(chineseNumRegex, function(match) {
-
-                if (match.includes('十')) {
-                    if (match === '十') return '10';
-                    let parts = match.split('十');
-                    let tens = parts[0] ? (numMap[parts[0]] || 1) : 1;
-                    let units = parts[1] ? (numMap[parts[1]] || 0) : 0;
-                    return (parseInt(tens) * 10 + parseInt(units)).toString();
-                }
-
-                let sub = match;
-                for (let key in numMap) { sub = sub.split(key).join(numMap[key]); }
-                return sub;
+            let digitStyle = clean.replace(chineseNumRegex, function(match) {
+                return chineseToNumber(match);
             });
 
-            digitStyle = digitStyle.split('十').join(''); 
-        
-            let chineseStyle = clean;
-            for (let key in reverseNumMap) {
-                chineseStyle = chineseStyle.split(key).join(reverseNumMap[key]);
+            // 4. 反向轉換：將阿拉伯數字轉回中文數字（可作為雙向保險）
+            function numberToChinese(numStr) {
+                const cnNums = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+                return numStr.split('').map(char => {
+                    return (char >= '0' && char <= '9') ? cnNums[parseInt(char)] : char;
+                }).join('');
             }
-
-            chineseStyle = chineseStyle.split('十').join('');
+            let chineseStyle = numberToChinese(digitStyle);
 
             return {
                 origin: clean,
-                digit: digitStyle,
-                chinese: chineseStyle
+                digit: digitStyle,       // 例如：將 "一百人" 轉換為 "100人"
+                chinese: chineseStyle    // 例如：將 "100人" 轉換為 "一零零人"
             };
         }
 
