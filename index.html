@@ -1364,94 +1364,37 @@
     function checkAnswer(playerAns, currentCorrectAns, choiceIndex = null) {
         isTransitioning = true;
 
-        function normalizeText(text) {
-            if (!text) return { origin: "", digit: "", chinese: "" };
-    
-            // 1. 移除所有標點符號與空白
-            let clean = text.replace(/[。，、；：：？?.,;: \s（）()\[\]【】""''「」『』_—\-_]/g, "");
-    
-            // 2. 定義中文數字轉阿拉伯數字的解析函式 (支援十、百、千、萬)
-            function chineseToNumber(cnStr) {
-                const charMap = {
-                    '零':0, '〇':0, '一':1, '二':2, '兩':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9,
-                    '0':0, '1':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9
-                };
-                const unitMap = { '十':10, '百':100, '千':1000, '萬':10000 };
-                
-                let total = 0;
-                let r = 0; // 當前累積的暫存數 (用於處理萬以上的位數)
-                let temp = 0; // 當前位數乘積的基數
-                
-                for (let i = 0; i < cnStr.length; i++) {
-                    let char = cnStr[i];
-                    if (charMap[char] !== undefined) {
-                        temp = charMap[char];
-                        if (i === cnStr.length - 1) {
-                            r += temp;
-                        }
-                    } else if (unitMap[char] !== undefined) {
-                        let unit = unitMap[char];
-                        if (unit === 10000) {
-                            if (temp === 0 && r === 0) temp = 1; // 針對 "萬" 
-                            r += temp;
-                            total += (r * 10000);
-                            r = 0;
-                            temp = 0;
-                        } else {
-                            if (temp === 0) temp = 1; // 針對 "十" (如：十五 -> temp=1, unit=10)
-                            r += (temp * unit);
-                            temp = 0;
-                        }
-                    }
+        // 僅容許數字寫法與標點形式差異；不使用包含比對。
+        function normalizeAnswer(text) {
+            const digits = {'零':'0','〇':'0','○':'0','Ｏ':'0','一':'1','二':'2','兩':'2','三':'3','四':'4','五':'5','六':'6','七':'7','八':'8','九':'9'};
+            const digitValue = c => digits[c] ?? c;
+            const parseNumeral = token => {
+                if (!/[十拾百佰千仟萬廿卅卌]/.test(token)) return [...token].map(digitValue).join('');
+                const t = token.replace(/廿/g,'二十').replace(/卅/g,'三十').replace(/卌/g,'四十').replace(/拾/g,'十').replace(/佰/g,'百').replace(/仟/g,'千');
+                const units = {'十':10,'百':100,'千':1000};
+                let total=0, section=0, current=0;
+                for (const c of t) {
+                    if (digits[c] !== undefined) current=Number(digits[c]);
+                    else if (units[c]) { section += (current || 1)*units[c]; current=0; }
+                    else if (c==='萬') {total+=(section+current)*10000;section=0;current=0;}
                 }
-                total += r;
-                return total.toString();
-            }
-
-            // 3. 匹配字串中所有的中文數字區塊，並將其統一轉換為阿拉伯數字字串
-            // 匹配範圍：一到九、十、百、千、萬、兩、零、〇
-            const chineseNumRegex = /[一二三四五六七八九十百千萬兩〇零]+/g;
-            let digitStyle = clean.replace(chineseNumRegex, function(match) {
-                return chineseToNumber(match);
-            });
-
-            // 4. 反向轉換：將阿拉伯數字轉回中文數字（可作為雙向保險）
-            function numberToChinese(numStr) {
-                const cnNums = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
-                return numStr.split('').map(char => {
-                    return (char >= '0' && char <= '9') ? cnNums[parseInt(char)] : char;
-                }).join('');
-            }
-            let chineseStyle = numberToChinese(digitStyle);
-
-            return {
-                origin: clean,
-                digit: digitStyle,       // 例如：將 "一百人" 轉換為 "100人"
-                chinese: chineseStyle    // 例如：將 "100人" 轉換為 "一零零人"
+                return String(total+section+current);
             };
+            let result=String(text).normalize('NFKC')
+                .replace(/[，,、;；:：]/g,'、')
+                .replace(/[（(]/g,'(').replace(/[）)]/g,')')
+                .replace(/[。．.]+$/g,'')
+                .replace(/\s+/g,'');
+            // 僅在數字語境轉換，避免將「一貫」「一心」等詞誤判為數字。
+            result=result.replace(/([零〇○一二兩三四五六七八九十拾百佰千仟萬廿卅卌]+)(?=年|月|日|歲|人|題|個|位|次|代|層|道|分|時|點|章|節|期|班|國|洲|元|度|%|\)|、|$)/g,parseNumeral);
+            // 年份的逐字寫法，如「一九〇一」，亦允許 1901。
+            result=result.replace(/[零〇○一二兩三四五六七八九]{3,}(?=年|\)|、|$)/g,parseNumeral);
+            return result;
         }
 
-        let cleanPlayer = normalizeText(playerAns);
-        let standardized = normalizeText(currentCorrectAns);
-        
-        let isCorrect = false;
-        if (gameMode === 'choice') {
-            isCorrect = (playerAns === currentCorrectAns);
-        } else {
-
-            let keywords = currentCorrectAns.split(/[,，、]/).filter(w => w.length > 0);
-
-
-            let pNormalized = normalizeText(playerAns);
-
-            isCorrect = keywords.every(kw => {
-                let kwNormalized = normalizeText(kw);
-    
-                return pNormalized.origin.includes(kwNormalized.origin) ||
-                       pNormalized.digit.includes(kwNormalized.digit) ||
-                       pNormalized.chinese.includes(kwNormalized.chinese);
-        });
-        }
+        let isCorrect = gameMode === 'choice'
+            ? playerAns === currentCorrectAns
+            : normalizeAnswer(playerAns) === normalizeAnswer(currentCorrectAns);
 
         let currentQuestionText = currentQuestions[currentIdx].q;
         let wrongList = getStoredWrongQuestions();
