@@ -1392,9 +1392,14 @@
             return result;
         }
 
+        // 填空題比對時忽略空白與常見標點；題庫原文及顯示內容不變。
+        function normalizeForComparison(text) {
+            return normalizeAnswer(text).replace(/[\s、，,。．.；;：:！!？?「」『』（）()【】\[\]〈〉《》·・]/g, '');
+        }
+
         let isCorrect = gameMode === 'choice'
             ? playerAns === currentCorrectAns
-            : normalizeAnswer(playerAns) === normalizeAnswer(currentCorrectAns);
+            : normalizeForComparison(playerAns) === normalizeForComparison(currentCorrectAns);
 
         let currentQuestionText = currentQuestions[currentIdx].q;
         let wrongList = getStoredWrongQuestions();
