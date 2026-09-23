@@ -1297,7 +1297,7 @@
                     tipEl.innerText = qData.mask;
                     tipEl.style.color = "#1A365D";
                 } else {
-                    tipEl.innerText = "【提示】：若遇多格答案，請依序輸入，答案之間空格、逗號、頓號皆可辨別";
+                    tipEl.innerText = "【提示】：若遇多格答案請依序輸入，空格、逗號、頓號皆可分隔；數字請用中文。";
                     tipEl.style.color = "#1A365D";
                 }
             }
@@ -1364,37 +1364,12 @@
     function checkAnswer(playerAns, currentCorrectAns, choiceIndex = null) {
         isTransitioning = true;
 
-        // 僅容許數字寫法與標點形式差異；不使用包含比對。
-        function normalizeAnswer(text) {
-            const digits = {'零':'0','〇':'0','○':'0','Ｏ':'0','一':'1','二':'2','兩':'2','三':'3','四':'4','五':'5','六':'6','七':'7','八':'8','九':'9'};
-            const digitValue = c => digits[c] ?? c;
-            const parseNumeral = token => {
-                if (!/[十拾百佰千仟萬廿卅卌]/.test(token)) return [...token].map(digitValue).join('');
-                const t = token.replace(/廿/g,'二十').replace(/卅/g,'三十').replace(/卌/g,'四十').replace(/拾/g,'十').replace(/佰/g,'百').replace(/仟/g,'千');
-                const units = {'十':10,'百':100,'千':1000};
-                let total=0, section=0, current=0;
-                for (const c of t) {
-                    if (digits[c] !== undefined) current=Number(digits[c]);
-                    else if (units[c]) { section += (current || 1)*units[c]; current=0; }
-                    else if (c==='萬') {total+=(section+current)*10000;section=0;current=0;}
-                }
-                return String(total+section+current);
-            };
-            let result=String(text).normalize('NFKC')
-                .replace(/[，,、;；:：]/g,'、')
-                .replace(/[（(]/g,'(').replace(/[）)]/g,')')
-                .replace(/[。．.]+$/g,'')
-                .replace(/\s+/g,'');
-            // 僅在數字語境轉換，避免將「一貫」「一心」等詞誤判為數字。
-            result=result.replace(/([零〇○一二兩三四五六七八九十拾百佰千仟萬廿卅卌]+)(?=年|月|日|歲|人|題|個|位|次|代|層|道|分|時|點|章|節|期|班|國|洲|元|度|%|\)|、|$)/g,parseNumeral);
-            // 年份的逐字寫法，如「一九〇一」，亦允許 1901。
-            result=result.replace(/[零〇○一二兩三四五六七八九]{3,}(?=年|\)|、|$)/g,parseNumeral);
-            return result;
-        }
-
-        // 填空題比對時忽略空白與常見標點；題庫原文及顯示內容不變。
+        // 填充題逐字核對：不轉換中文數字、繁簡字或異體字。
+        // 只忽略空白、不可見格式字元及標點符號。
         function normalizeForComparison(text) {
-            return normalizeAnswer(text).replace(/[\s、，,。．.；;：:！!？?「」『』（）()【】\[\]〈〉《》·・]/g, '');
+            return String(text ?? '').normalize('NFC')
+                .replace(/[\s\u200B-\u200D\u2060\uFEFF]/g, '')
+                .replace(/[\p{P}]/gu, '');
         }
 
         let isCorrect = gameMode === 'choice'
