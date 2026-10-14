@@ -256,6 +256,20 @@
             box-shadow: 0 0 8px rgba(140, 38, 38, 0.15), inset 0 1px 3px rgba(0,0,0,0.05);
         }
 
+        .range-panel { padding: 0; background: transparent; border: none; }
+        .range-heading { display: flex; justify-content: space-between; color: #8c2626; margin-bottom: 12px; }
+        .dual-range { position: relative; height: 34px; margin: 14px 4px 8px; display: flex; align-items: center; }
+        .dual-range-track { position: absolute; left: 0; right: 0; height: 7px; border-radius: 5px; background: #e0d8cc; pointer-events: none; }
+        .dual-range-fill { position: absolute; height: 7px; border-radius: 5px; background: #8c2626; pointer-events: none; }
+        .dual-range input[type="range"] { position: absolute; width: 100%; height: 34px; margin: 0; background: transparent; appearance: none; -webkit-appearance: none; pointer-events: none; }
+        .dual-range input[type="range"]::-webkit-slider-runnable-track { background: transparent; height: 7px; }
+        .dual-range input[type="range"]::-moz-range-track { background: transparent; height: 7px; }
+        .dual-range input[type="range"]::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; pointer-events: auto; width: 21px; height: 21px; margin-top: -7px; border: 3px solid #faf8f5; border-radius: 50%; background: #8c2626; box-shadow: 0 1px 5px #7a6c5a88; cursor: grab; }
+        .dual-range input[type="range"]::-moz-range-thumb { pointer-events: auto; width: 16px; height: 16px; border: 3px solid #faf8f5; border-radius: 50%; background: #8c2626; box-shadow: 0 1px 5px #7a6c5a88; cursor: grab; }
+        #range-start { z-index: 3; }
+        #range-end { z-index: 2; }
+        .dual-range-labels { display: flex; justify-content: space-between; color: #776c60; font-size: .78rem; }
+        .range-summary { font-size: .9rem; color: #1a365d; margin: 12px 0; }
         /* --- 進度看板 --- */
         .dashboard-classic {
             border: 1px solid #cbd2cb;
@@ -526,6 +540,17 @@
         <div class="btn-group">
             <button type="button" id="mode-choice" onclick="selectMode('choice')">選擇題</button>
             <button type="button" id="mode-fill" onclick="selectMode('fill')">填空題</button>
+        </div>
+
+        <label>【 題號範圍 】</label>
+        <div class="range-panel">
+            <div class="range-heading"><span>從第 <strong id="range-start-label">1</strong> 題</span><span>到第 <strong id="range-end-label">400</strong> 題</span></div>
+            <div class="dual-range" aria-label="拖動兩端圓點設定題號範圍">
+                <div class="dual-range-track"></div>
+                <div class="dual-range-fill" id="range-fill"></div>
+                <input aria-label="起始題號" id="range-start" type="range" min="1" max="400" value="1" oninput="updateQuestionRange('start')">
+                <input aria-label="結束題號" id="range-end" type="range" min="1" max="400" value="400" oninput="updateQuestionRange('end')">
+            </div>
         </div>
 
         <label>【 測驗題數 】</label>
@@ -1056,6 +1081,12 @@
         checkLocalStorageStatus();
         updateMenuUI();
         renderDashboardData();
+        const maxQuestion = rawQuestionBank.length;
+        document.getElementById('range-start').max = maxQuestion;
+        document.getElementById('range-end').max = maxQuestion;
+        document.getElementById('range-end').value = maxQuestion;
+        updateQuestionRange('end');
+        updateQuestionRange('end');
     };
 
     function initProgressHistory() {
@@ -1191,16 +1222,46 @@
         if (bonusMode === 'review') document.getElementById('bonus-review').classList.add('selected-bonus-btn');
     }
 
+    function updateQuestionRange(changed) {
+        const startInput = document.getElementById('range-start');
+        const endInput = document.getElementById('range-end');
+        let start = Number(startInput.value), end = Number(endInput.value);
+        if (start > end) {
+            if (changed === 'start') { end = start; endInput.value = end; }
+            else { start = end; startInput.value = start; }
+        }
+        const max = Number(startInput.max);
+        const left = (start - 1) / (max - 1) * 100;
+        const right = (end - 1) / (max - 1) * 100;
+        const fill = document.getElementById('range-fill');
+        fill.style.left = left + '%';
+        fill.style.width = (right - left) + '%';
+        startInput.style.zIndex = (end - start <= 2 && changed === 'start') ? '4' : '3';
+        endInput.style.zIndex = (end - start <= 2 && changed === 'end') ? '4' : '2';
+        document.getElementById('range-start-label').textContent = start;
+        document.getElementById('range-end-label').textContent = end;
+    }
+    function resetQuestionRange() {
+        document.getElementById('range-start').value = 1;
+        document.getElementById('range-end').value = rawQuestionBank.length;
+        updateQuestionRange('end');
+    }
     function startGame() {
         if (!gameMode) { alert("請先選擇【 測驗模式 】"); return; }
         if (!totalQuestionsSetting) { alert("請先選擇【 選擇題數 】"); return; }
 
+        const rangeStart = Number(document.getElementById('range-start').value);
+        const rangeEnd = Number(document.getElementById('range-end').value);
+        const rangeBank = rawQuestionBank.filter(item => {
+            const number = Number(item.q.match(/^\d+/)?.[0]);
+            return number >= rangeStart && number <= rangeEnd;
+        });
         let progressMap = getProgressMap();
         let pool = [];
 
         if (bonusMode === 'review') {
             let wrongTexts = getStoredWrongQuestions();
-            pool = rawQuestionBank.filter(item => {
+            pool = rangeBank.filter(item => {
                 let cleanBankQ = item.q.replace(/^\d+\n/g, "").trim();
                 return wrongTexts.some(wText => {
                     let cleanWrongText = wText.replace(/^\d+\n/g, "").trim();
@@ -1209,26 +1270,31 @@
             });
             if (pool.length === 0) {
                 alert("您目前沒有錯題資料，將為您切換為常規抽題。");
-                pool = [...rawQuestionBank];
+                pool = [...rangeBank];
                 bonusMode = null;
                 updateMenuUI();
             }
         } 
         else if (bonusMode === 'unvisited') {
-            pool = rawQuestionBank.filter(item => !progressMap[item.q]);
+            pool = rangeBank.filter(item => !progressMap[item.q]);
             
             if (pool.length === 0) {
-                incrementRound();
-                localStorage.setItem('修辦津要_通關軌跡', JSON.stringify({})); 
-                progressMap = {};
-                alert(`恭喜您！完整修辦考題已全數攻克！\n系統已自動為您重置題庫，進入【第 ${getRoundCount()} 輪】全局挑戰！`);
-                pool = [...rawQuestionBank];
+                if (rangeStart === 1 && rangeEnd === rawQuestionBank.length) {
+                    incrementRound();
+                    localStorage.setItem('修辦津要_通關軌跡', JSON.stringify({}));
+                    alert(`恭喜您！完整修辦考題已全數攻克！\n系統已自動為您重置題庫，進入【第 ${getRoundCount()} 輪】全局挑戰！`);
+                    pool = [...rangeBank];
+                } else {
+                    alert(`第 ${rangeStart}～${rangeEnd} 題皆已挑戰過，請調整範圍或取消「優先未出題」。`);
+                    return;
+                }
             }
         } 
         else {
-            pool = [...rawQuestionBank];
+            pool = [...rangeBank];
         }
 
+        if (pool.length === 0) { alert('選定範圍內沒有可測驗的題目。'); return; }
         let shuffled = pool.sort(() => 0.5 - Math.random());
         let finalCount = Math.min(totalQuestionsSetting, shuffled.length); 
         currentQuestions = shuffled.slice(0, finalCount);
@@ -1243,7 +1309,7 @@
         let titleText = gameMode === 'choice' ? '選擇題模式' : '填空題模式';
         if (bonusMode === 'unvisited') titleText += ' + 優先未出';
         if (bonusMode === 'review') titleText += ' + 錯題複習';
-        document.getElementById('game-title').innerText = titleText;
+        document.getElementById('game-title').innerText = titleText + `｜第 ${rangeStart}～${rangeEnd} 題`;
         
         showQuestion();
     }
